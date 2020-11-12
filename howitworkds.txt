@@ -1,0 +1,15 @@
+npm start on server first
+npm start on client
+
+
+
+controller gets info from database,
+routes gets it from the controller
+the controller sends it to the app
+
+
+in api, create new const api2 for an new links
+
+any time the url is set to systemPage, it calls the index page in the server and uses app.use(/systemPage)
+
+mongo
