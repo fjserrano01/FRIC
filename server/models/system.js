@@ -9,24 +9,19 @@ const SystemSchema = mongoose.Schema({
         type: String
     },
     systemLocation:{
-        type: Array,
-        required: true
+        type: [String]
     },
     systemRouter: {
-        type: Array,
-        required: true
+        type: [String]
     },
     systemSwitch:{
-        type: Array,
-        required: true
+        type: [String]
     },
     systemRoom:{
-        type : Array,
-        requied: true
+        type : [String]
     },
     testPlan:{
-        type: String,
-        requied: true,
+        type: String
     },
     systemArchive:{
         type: Boolean,
@@ -34,15 +29,12 @@ const SystemSchema = mongoose.Schema({
     },
     systemConfidentiality:{
         type: String, //Enumeration
-        requied: true 
     },
     systemIntergrity:{
-        type: String, //Enumeration
-        required: true
+        type: String //Enumeration
     },
     systemAvailability:{
-        type: String, //Enumeration
-        required: true
+        type: String //Enumeration
     }  
 });
 

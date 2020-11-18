@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const FindingSchema = new Schema(
-    {   
-        hostName:{type: String},
+const Finding = new Schema(
+    {
+        hostNam:{type:String, required: false},
         ipPort:{type:String, required: false},
         description:{type:String, required: false},
         longDescription:{type: String, required: false},
@@ -11,10 +11,23 @@ const FindingSchema = new Schema(
         type:{type:String, required: false},
         classification:{type:String, required:false},
         associationToFinding:{type:Array, required:false},
-        //evidence:{}
+        posture:{type:String},
+        confidentialityImpact:{type:String},
+        integrityImpact:{type:String},
+        availabilityImpact:{type:String},
+        countermeasureValue:{type:Number},
+        impactLevel:{type:String},
+        impactLevelDescription:{type:String,},
+        threatRelevance:{type:String},
+        catScore:{type:String},
+        catValue:{type:Number},
+        vulnScore:{type:Number},
+        vs:{type:String},
+        likelihood:{type:String},
+        risk:{type:String},
         archiveStatus:{type: Boolean, default: false}
     
     }
 )
 
-module.exports = mongoose.model('Finding', FindingSchema)
+module.exports = mongoose.model('findings', Finding)

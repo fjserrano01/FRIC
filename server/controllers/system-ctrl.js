@@ -2,6 +2,8 @@ const System = require('../models/system')
 
 createSystem = (req,res) => {
     const body = req.body;
+    console.log("made it here")
+    console.log(body)
 
     if(!body){
         return res.status(400).json({
@@ -20,12 +22,12 @@ createSystem = (req,res) => {
             return res.status(201).json({
                 success: true,
                 id: system._id,
-                message: 'Event created!',
+                message: 'System created!',
             })
         }).catch(error =>{
             return res.status(400).json({
                 error,
-                message: 'Event not created!',
+                message: 'System not created!',
             })    
         })
 }
