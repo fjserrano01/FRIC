@@ -4,6 +4,10 @@ const SubtaskSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  taskID:{
+    type: String,
+    required: true
+  },
   subtaskProgress: {
     type: String, //enumeration
   },

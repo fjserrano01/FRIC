@@ -32,6 +32,7 @@ createTask = (req,res) => {
 }
 updateTask = async (req, res) => {
     const body = req.body
+    console.log(req.params.id )
 
     if (!body) {
         return res.status(400).json({
@@ -47,18 +48,19 @@ updateTask = async (req, res) => {
                 message: 'Event not found!',
             })
         }
-        task.taskTitle = body.title,
-        task.taskDescription =body.description,
+        console.log(task)
+        task.taskTitle = body.taskTitle,
+        task.taskDescription =body.taskDescription,
         task.system = body.system,
         task.analyst = body.analyst,
         task.priority = body.priority,
         task.progress = body.progress,
-        task.numSubtasks = body.subtasks,
-        task.numFindings = body.findings,
+        task.numSubtasks = body.numSubtasks,
+        task.numFindings = body.numFindings,
         task.collaborators = body.collaborators,
         task.relatedTasks = body.relatedTasks,
         task.dueDate = body.dueDate
-            .save()
+        task.save()
             .then(() => {
                 return res.status(200).json({
                     success: true,
@@ -99,7 +101,6 @@ getTaskById = async (req, res) => {
         return res.status(200).json({ success: true, data: task })
     }).catch(err => console.log(err))
 }
-
 getTasks = async (req, res) => {
     await Task.find({}, (err, task) => {
         if (err) {
@@ -113,10 +114,20 @@ getTasks = async (req, res) => {
         return res.status(200).json({ success: true, data: task })
     }).catch(err => console.log(err))
 }
+getTaskBySystem = async (req, res) => {
+    await Task.findOne({ system: req.params.id }, (err, task) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: task })
+    }).catch(err => console.log(err))
+}
 module.exports = {
     createTask,
     updateTask,
     deleteTask,
     getTasks,
-    getTaskById
+    getTaskById,
+    getTaskBySystem
 }

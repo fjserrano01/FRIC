@@ -111,10 +111,20 @@ getSubtask = async (req, res) => {
         return res.status(200).json({ success: true, data: subtask })
     }).catch(err => console.log(err))
 }
+getSubtaskByTask = async (req, res) => {
+    await Subtask.findOne({ taskID: req.params.id }, (err, subtask) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: subtask })
+    }).catch(err => console.log(err))
+}
 module.exports = {
     createSubtask,
     updateSubtask,
     deleteSubtask,
     getSubtask,
-    getSubtaskById
+    getSubtaskById,
+    getSubtaskByTask
 }
