@@ -16,10 +16,15 @@ class CreateSubTask extends Component{
             subtaskAssociation:'',
             subtaskTeam:'',
             subtaskCollaborators:'',
-            submitted:false
-          
+            submitted:false,
+            system:"",
+            taskID:"",
+            systemList:[],
+            taskList:[],
+            analystList:[]
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleChangeTask = this.handleChangeTask.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     };
     handleSubmit = async e =>{
@@ -32,16 +37,78 @@ class CreateSubTask extends Component{
         const subtaskAssociation = this.state.subtaskAssociation
         const subtaskTeam = this.state.subtaskTeam
         const subtaskCollaborators = this.state.subtaskCollaborators
+        const taskID = this.state.taskID
+        const system = this.state.system
         const payload = {
-          subtaskTitle, subtaskProgress, subtaskDescription, subtaskDueDate, subtaskAttachment, subtaskAssociation, subtaskTeam, subtaskCollaborators
+          subtaskTitle, subtaskProgress, subtaskDescription, subtaskDueDate, subtaskAttachment, subtaskAssociation, subtaskTeam, subtaskCollaborators, taskID, system
         }
         this.createSubtask(payload)
         this.setState({submitted:true})
-      };
-      createSubtask (payload){
+    };
+    componentDidMount(){
+      this.getSystems();
+      this.getAnalysts();
+    }
+    getAnalysts = async e =>{
+      await api.getAllAnalyst().then((res)=>{
+        const data = res.data.data
+        console.log("gettingAnalysts", data)
+        this.setState({analystList:data})
 
+      }).catch(()=>{
+        this.setState({analystList:[]})
+      })
+    }
+    displayAnalysts(posts){
+      console.log("display Analyst", posts)
+      if(!posts.length)return null;
+      return posts.map((post, index)=>(
+        <option key={index} value={post._id}>
+          {post.initial}
+        </option>
+      ))
+    }
+    getSystems = async e =>{
+      await api.getAllSystems().then((res)=>{
+        const data = res.data.data
+        this.setState({systemList:data})
+          
+      }).catch(()=>{
+          this.setState({systemList:[]})
+        })
+      }
+      displaySystems(posts){
+        if(!posts.length) return null;
+        return posts.map((post, index) => (
+          <option key={index} value={post._id}>
+            {post.systemName}
+          </option>
+        ))
+      }
+      setTaskList = async (value) =>{
+        await api.getTaskBySystem(value).then((res) =>{
+            const data = res.data.data
+            if(data == null){
+                this.setState({taskList:[]})
+            }else{
+                this.setState({taskList:data})
+            }
+            
+        }).catch(()=>{
+            this.setState({taskList:[]})
+            })
+    }
+      displayTasks(){
+        const posts = this.state.taskList
+        if(!posts.length) return null;
+        return posts.map((post, index) => (
+          <option key={index} value={post._id}>
+            {post.taskTitle}
+          </option>
+        ))
+      }
+      createSubtask (payload){
         api.insertSubtask(payload)
-        
       }
       handleChange = e =>{
         console.log(e)
@@ -53,6 +120,17 @@ class CreateSubTask extends Component{
           [name]: value
         });
       };
+      handleChangeTask = e =>{
+        console.log(e)
+        const target = e.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+          [name]: value
+        });
+        this.setTaskList(value)
+      }
       handleDateChange = e =>{
         console.log(e)
 
@@ -112,6 +190,51 @@ class CreateSubTask extends Component{
                         class="form-control" 
                         placeholder="Enter Subtask Description"
                         />
+                    </div>
+                    <div class="form-group">
+                      <label >System</label>
+                        <select 
+                        placeholder="Not Selected" 
+                        onChange={this.handleChangeTask}  
+                        value={this.state.value}
+                        class="form-control" 
+                        name="system" 
+                        required >
+                          <option value="" selected disabled>
+                          none
+                          </option>
+                          {this.displaySystems(this.state.systemList)}
+                      </select>
+                    </div>
+                    <div class ="form-group">
+                      <label> Task</label>
+                      <select
+                      placeholder="Not Selected"
+                      onChange={this.handleChange}
+                      value={this.state.value}
+                      class="form-control"
+                      name="taskID"
+                      required>
+                        <option value="" selected disabled>
+                          none
+                        </option>
+                        {this.displayTasks(this.state.taskList)}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label >Analyst</label>
+                        <select 
+                        placeholder="Not Selected" 
+                        onChange={this.handleChange}  
+                        value={this.state.value}
+                        class="form-control" 
+                        name="analyst" 
+                        required >
+                          <option value="" selected disabled>
+                          none
+                          </option>
+                          {this.displayAnalysts(this.state.analystList)}
+                      </select>
                     </div>
                     <div class="form-group">
                       <label >Attachments</label>

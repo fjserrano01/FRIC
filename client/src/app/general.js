@@ -5,7 +5,10 @@ import Button from 'react-bootstrap/Button';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import GetTaskBySystem from '../components/getTaskBySystem'
-
+import ReactNotification from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
+import {store} from 'react-notifications-component'
+import * as moment from 'moment'
 
 class General extends Component{
   constructor(props){
@@ -13,18 +16,96 @@ class General extends Component{
     this.state = {
         eventList:[],
         systemList:[],
-        //taskList:[],
+        taskListByDate:[],
+        taskListByDateLate:[],
         progress:[],
         eventInformation:[],
-        type:""
+        type:"",
+        notified:false,
+        notifiedLate:false
     }
 }
 componentDidMount(){
   console.log("in componentDidMount general")
     this.getEvents()
     this.getSystems()
-    // this.getTasks()
     this.getProgress()
+    this.getTasksByDate()
+    this.getTasksByDateLate()
+}
+addNot (posts){
+  console.log(posts)
+  if(!posts.length) return null;
+  if(this.state.notified == true){
+    return null
+  }
+  this.setState({notified:true})
+  return posts.map((post, index)=>(
+  <div key={index}>
+      {
+      store.addNotification({
+        title: post.taskTitle,
+        message: " Task is due soon "+moment(post.dueDate).format('MM-DD-YY'),
+        type:"success",
+        insert:"top",
+        container:"top-right",
+        animationIn:["animate__animated","animate__fadeIn"],
+        animationOut:["animate__animated","animate__fadeOut"],
+        dismiss:{
+          duration:5000,
+          onScreen:true
+        },
+        width:500
+        
+      })}
+  </div>
+  ))
+}
+addNotLate (posts){
+  console.log(posts)
+  if(!posts.length) return null;
+  if(this.state.notifiedLate == true){
+    return null
+  }
+  this.setState({notifiedLate:true})
+  return posts.map((post, index)=>(
+  <div key={index}>
+      {
+      store.addNotification({
+        title: post.taskTitle,
+        message: " Task is past due "+moment(post.dueDate).format('MM-DD-YY'),
+        type:"danger",
+        insert:"top",
+        container:"top-right",
+        animationIn:["animate__animated","animate__fadeIn"],
+        animationOut:["animate__animated","animate__fadeOut"],
+        dismiss:{
+          duration:5000,
+          onScreen:true
+        },
+        width:500
+        
+      })}
+  </div>
+  ))
+}
+getTasksByDate = async e =>{
+  await api.getTasksByDate(this.props.init).then((res)=>{
+    const data = res.data.data
+    this.setState({taskListByDate:data})
+    
+    }).catch(()=>{
+    this.setState({taskListByDate:[]})
+    })
+}
+getTasksByDateLate = async e =>{
+  await api.getTasksByDateLate(this.props.init).then((res)=>{
+    const data = res.data.data
+    this.setState({taskListByDateLate:data})
+    
+    }).catch(()=>{
+    this.setState({taskListByDateLate:[]})
+    })
 }
 getEvents = async e =>{
   //console.log("in getEvents")
@@ -49,17 +130,7 @@ getSystems = async e =>{
     this.setState({systemList:[]})
   })
 }
-// getTasks = async e =>{
-//   console.log("in getTasks")
-//   await api.getAllTasks().then((res)=>{
-//     const data = res.data.data
-//     console.log(data)
 
-//     this.setState({taskList:data})
-//   }).catch(()=>{
-//     this.setState({taskList:[]})
-//   })
-// }
 getProgress = async e =>{
   await api.getEventProgress().then((res) => { 
     const data = res.data.data
@@ -68,16 +139,7 @@ getProgress = async e =>{
     this.setState({progress:[]})
 })
 }
-// setTaskList = async (systemName)=>{
-//   await api.getTaskBySystem(systemName).then((res)=>{
-//     const data = res.data.data
-//     console.log("in set data")
-//     console.log(data)
-//     return data
-//   }).catch(()=>{
-//     this.setState({tasksLists:[]})
-//   })
-// }
+
 displayProgress = (progress) => {
   //console.log('in progress')
   //console.log(progress[0])
@@ -200,17 +262,215 @@ displayingSystemInformation = () =>{
   }
   if(this.state.type == "task"){
     return posts.map((post, index)=>(
-        <div key={index}>
-          {post.taskTitle}
-          {post.taskDescription}
+      <div key={index} className="form-group">
+      <h2>View Task</h2>
+      <form onSubmit={this.setVariables}>
+      <div className="form-group">
+        <label >Title</label>
+        <input 
+          onChange={this.handleChange} 
+          type="text" 
+          value={post.taskTitle}
+          name="taskTitle"
+          className="form-control" 
+          placeholder="Enter Task Title"
+          contentEditable="true"
+          />
+      </div>
+      <div className="form-group">
+        <label >Task Description</label>
+        <input 
+          onChange={this.handleChange} 
+          type="text" 
+          value={post.taskDescription}
+          name="taskDescription"
+          className="form-control" 
+          
+          />
+      </div>
+      <div class="form-group">
+        <label >System</label>
+        <input 
+          onChange={this.handleChange} 
+          type="text" 
+          value={post.system}
+          name="system"
+          class="form-control" 
+          />
+      </div>
+      <div class="form-group">
+        <label >Analyst</label>
+        <input 
+          onChange={this.handleChange} 
+          type="text" 
+          value={post.analyst}
+          name="analyst"
+          class="form-control" 
+          />
+      </div>
+      <div class="form-group">
+      <label>Priority</label>
+        <select 
+          placeholder="Not Selected" 
+          onChange={this.handleChange}  
+          value={post.priority}
+          class="form-control" 
+          name="priority" 
+           >
+              <option value="" disabled selected>Choose your option</option>
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+        </select>
         </div>
+        <div class="form-group">
+        <label>Progress</label>
+        <select 
+          placeholder="Not Selected" 
+          onChange={this.handleChange}  
+          value={post.progress}
+          class="form-control" 
+          name="progress" 
+           >
+              <option value="" disabled selected>Choose your option</option>
+              <option value="Not Started">Not Started</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Transferred">Transferred</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Complete">Complete</option>
+              <option value="Not Applicable">Not Applicable</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Collaborators</label>
+        <input 
+          type="text" 
+          onChange={this.handleChange}  
+          value={post.collaborators}
+          class="form-control" 
+          name="collaborators"
+          
+           />
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="date">Due Date: </label>
+        <input 
+          type="text" 
+          onChange={this.handleChange}  
+          value={moment(post.dueDate).format('MM-DD-YY')}
+          class="form-control" 
+          name="dueDate"
+          />
+      </div>
+      
+      </form>
+      <div>
+          Number of Findings: {post.numFindings}
+      </div>
+      <div>
+          Number of Substasks: {post.numFindings}
+      </div>
+  </div>
     ))
   }
   if(this.state.type == "subtask"){
     return posts.map((post, index)=>(
-      <div key={index}>
-        {post.subtaskTitle}
-      </div>
+      <div key={index} className="form-group">
+                    <h2>View Subtask</h2>
+                    <form onSubmit={this.setVariables}>
+                    <div className="form-group">
+                      <label >Title</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={post.subtaskTitle}
+                        name="subtaskTitle"
+                        className="form-control" 
+                        placeholder="Enter Subtask Title"
+                        />
+                    </div>
+                    <div className="form-group">
+                      <label >Subtask Description</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={post.subtaskDescription}
+                        name="subtaskDescription"
+                        className="form-control" 
+                        
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Subtask Team</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={post.subtaskTeam}
+                        name="subtaskTeam"
+                        class="form-control" 
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Subtask Attachment</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="float" 
+                        value={post.subtaskAttachment}
+                        name="subtaskAttachment"
+                        class="form-control" 
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Subtask Association</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={post.subtaskAssociation}
+                        name="subtaskAssociation"
+                        class="form-control" 
+                        />
+                    </div>
+                      <div class="form-group">
+                      <label>Progress</label>
+                      <select 
+                        placeholder="Not Selected" 
+                        onChange={this.handleChange}  
+                        value={post.subtaskProgress}
+                        class="form-control" 
+                        name="subtaskProgress" 
+                         >
+                            <option value="" disabled selected>Choose your option</option>
+                            <option value="Not Started">Not Started</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Transferred">Transferred</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Complete">Complete</option>
+                            <option value="Not Applicable">Not Applicable</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Collaborators</label>
+                      <input 
+                        type="text" 
+                        onChange={this.handleChange}  
+                        value={post.subtaskCollaborators}
+                        class="form-control" 
+                        name="subtaskCollaborators"
+                        
+                         />
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label" for="date">Due Date: </label>
+                      <input 
+                        type="text" 
+                        onChange={this.handleChange}  
+                        value={moment(post.subtaskDueDate).format('MM-DD-YY')}
+                        class="form-control" 
+                        name="subtaskDueDate"
+                        />
+                    </div>
+                    </form>
+                </div>
     ))
   }
 }
@@ -234,7 +494,7 @@ displaySystem = (posts) =>{
                   </Card.Header>
                   <Accordion.Collapse eventKey="0">
                     <Card.Body>
-                    <GetTaskBySystem display={this.displaySecondCell.bind(this)} system={post._id}/>
+                    <GetTaskBySystem display={this.displaySecondCell.bind(this)} system={post._id} />
                     </Card.Body>
                   </Accordion.Collapse>
                 </Card>
@@ -261,11 +521,14 @@ displayEvent = (posts) => {
 render(){
     return(
     <div className="container">
+      <ReactNotification types={[{htmlClasses:["notification-right"]}]}/>
     <div className="row">
+    <div style={{display:'none'}}>{this.addNot(this.state.taskListByDate)}</div>
+    <div style={{display:'none'}}>{this.addNotLate(this.state.taskListByDateLate)}</div>
     <div className="col-5">
       {this.displayEvent(this.state.eventList)}
     </div>
-    <div className="col-7 addBorder">
+    <div className="col-5 addBorder">
        {this.displayingSystemInformation()}
     </div>
 

@@ -52,7 +52,8 @@ class CreateSystem extends Component{
         const value = target.value;
         const name = target.name;
         if (name == "systemLocation"){
-          var temporary = target.value.split(',')
+          const temporary = target.value.split('/')
+          console.log("temporary:", temporary)
           this.setState({
             [name] : temporary
           })

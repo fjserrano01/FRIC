@@ -17,7 +17,6 @@ class GetTaskBySystem extends Component{
         this.setTaskList()
     }
     displaySecondCell = (posts, info) =>{
-      console.log("in getTasksBySystem")
       this.props.display(posts, info)
     }
     setTaskList = async e =>{
@@ -26,7 +25,7 @@ class GetTaskBySystem extends Component{
             if(data == null){
                 this.setState({taskList:[]})
             }else{
-                this.setState({taskList:[data]})
+                this.setState({taskList:data})
             }
             
         }).catch(()=>{
@@ -35,8 +34,6 @@ class GetTaskBySystem extends Component{
 
     }
     displayTask = (posts) =>{
-        //console.log("in display system")
-        console.log(posts)
         if(!posts.length)return null;
         return posts.map((post, index)=>(
           <div key={index}>
@@ -50,7 +47,7 @@ class GetTaskBySystem extends Component{
                         </Card.Header>
                         <Accordion.Collapse eventKey="0">
                           <Card.Body>
-                          <GetTaskBySystem display={this.displaySecondCell.bind(this)} task={post._id}/>
+                          <GetSubtaskByTask display={this.displaySecondCell.bind(this)} taskID={post._id}/>
                           </Card.Body>
                         </Accordion.Collapse>
                       </Card>

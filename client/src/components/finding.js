@@ -36,19 +36,10 @@ class Finding extends Component{
                         {post._id}
                     </th>
                     <th>
-                        Title
+                        {post.hostName}
                     </th>
                     <th>
-                        System
-                    </th>
-                    <th>
-                        Task
-                    </th>
-                    <th>
-                        Subtask
-                    </th>
-                    <th>
-                        Analyst
+                    {post.analyst}
                     </th>
                     <th>
                         {post.status}
@@ -60,10 +51,10 @@ class Finding extends Component{
                         {post.type}
                     </th>
                     <th>
-                        Risk
+                    {post.threatRelevance}
                     </th>
                     <th>
-                        <a className="btn btn-primary" href={'/view-task/'+post._id}>View</a>
+                        <a className="btn btn-primary" href={'/view-finding/'+post._id}>View</a>
                     </th>
                         
                 </tr>
@@ -73,17 +64,14 @@ class Finding extends Component{
         
         return(
             <div className="container">
-                <a className="btn btn-primary" href="/create-finding">Create Finding</a>
-                <a className="btn btn-primary" href="/create-finding">ERB Report</a>
-                <a className="btn btn-primary" href="/create-finding">Risk Matrix</a>
-                <a className="btn btn-primary" href="/create-finding">Final Report</a>
+                <a className="btn btn-primary" target="_blank" href="/create-finding">Create Finding</a>
+                <a className="btn btn-primary" target="_blank" href="http://localhost:5000/reports/erb">ERB Report</a>
+                <a className="btn btn-primary" target="_blank" href="http://localhost:5000/reports/risk">Risk Matrix</a>
+                <a className="btn btn-primary" target="_blank" href="http://localhost:5000/reports/final">Final Report</a>
                 <Table bordered hover>
                     <thead>
                         <th>ID</th>
                         <th>Title</th>
-                        <th>System</th>
-                        <th>Task</th>
-                        <th>Subtask</th>
                         <th>Analyst</th>
                         <th>Status</th>
                         <th>Classification</th>

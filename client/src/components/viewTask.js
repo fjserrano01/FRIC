@@ -12,7 +12,8 @@ class ViewTask extends Component{
         this.state = {
           taskTitle:'', 
           taskDescription:'', 
-          system: '', 
+          system: '',
+          //systemName:'',
           analyst:'', 
           priority: '', 
           progress: '', 
@@ -24,17 +25,31 @@ class ViewTask extends Component{
           dueDate:'',
           taskIdent:[], 
           editForm:'', 
-          editStatus:false
+          editStatus:false,
+          archive:false,
+          archiveSubmitted:false
           
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     };
+    handleArchive = async e =>{
+      const id = this.props.match.params.id
+      const archiveStatus =true
+      const payload = {
+        archiveStatus
+      }
+      console.log("made it here")
+      this.updateTaskArchive(id, payload)
+    };
+
+
     handleSubmit = async e =>{
         const id = this.props.match.params.id
         const taskTitle= this.state.taskTitle
         const taskDescription = this.state.taskDescription
         const system = this.state.system
+        //const systemName = this.state.systemName
         const analyst = this.state.analyst
         const priority = this.state.priority
         const progress = this.state.progress
@@ -46,6 +61,7 @@ class ViewTask extends Component{
         const payload = {
           taskTitle, taskDescription, system, analyst, priority, progress, numSubtasks, numFindings, collaborators, relatedTasks
         }
+        console.log("made it here")
         this.updateTask(id, payload)
         
         
@@ -57,6 +73,13 @@ class ViewTask extends Component{
           })
         
       }
+      updateTaskArchive (id, payload){
+        api.updateTaskArchive(id, payload).then(()=>{
+          alert('Item updated')
+          this.setState({archiveSubmitted:true})
+        })
+      
+    }
       handleChange = e =>{
         const target = e.target;
         const value = target.value;
@@ -70,6 +93,7 @@ class ViewTask extends Component{
         const Title=e.target.taskTitle.value
         const taskDescription=e.target.taskDescription.value
         const system = e.target.system.value
+        //const sysName = e.target.systemName.value
         const analyst = e.target.analyst.value
         const priority = e.target.priority.value
         const progress = e.target.progress.value
@@ -80,6 +104,7 @@ class ViewTask extends Component{
           taskTitle : Title,
           taskDescription : taskDescription,
           system : system,
+          //systemName : sysName,
           analyst: analyst,
           priority:priority,
           progress:progress,
@@ -209,6 +234,7 @@ class ViewTask extends Component{
                         />
                     </div>
                     <button type="submit" class="btn btn-primary">Edit</button>
+                    
                     </form>
                     <div>
                         Number of Findings: {post.numFindings}
@@ -220,11 +246,26 @@ class ViewTask extends Component{
         ))
     }
       render(){
+        if(this.state.archiveSubmitted){
+          return(<Redirect to="/tasks"/>);
+        }
+        if(this.state.archive){
+          return(
+            <div className="wrapper formatted-form">
+              <div>
+                Are you sure you want to archive this task?
+                <a className="btn btn-primary" onClick={()=>this.handleArchive()}>Yes</a>
+                <a className="btn btn-primary" onClick={()=>this.setState({archive:!this.state.archive})}>No</a>
+              </div>
+            </div>
+            
+          )
+        }
         if(this.state.editStatus){
           return(
             <div className="wrapper formatted-form">
                 <div class="form-group">
-                  <h2>Create Task</h2>
+                  <h2>Edit Task</h2>
                 <form onSubmit={this.handleSubmit}>
                   <div class="form-group">
                       <label >Title</label>
@@ -252,10 +293,9 @@ class ViewTask extends Component{
                     </div>
                     <div class="form-group">
                       <label >System</label>
-                      <input 
-                        onChange={this.handleChange} 
+                      <input
                         type="text" 
-                        value={this.state.value}
+                        value={this.state.system}
                         defaultValue={this.state.system}
                         name="system"
                         class="form-control" 
@@ -333,9 +373,10 @@ class ViewTask extends Component{
                     </div>
                   
           
-                    <button type="submit" onClick="window.location.href = '/tasks'" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                   </form>
                 </div>
+                <button className="btn btn-primary" onClick={()=>this.setState({archive:!this.state.archive})}>Archive</button>
               </div>
           )
         }else{

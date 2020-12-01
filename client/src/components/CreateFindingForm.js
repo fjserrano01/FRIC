@@ -12,7 +12,11 @@ class CreateFindingForm extends Component{
 	        ipPort:'',
 	        description:'',
 	        longDescription:'',
-	        status:'',
+            status:'',
+            system:'',
+            task:'',
+            subtask:'',
+            analyst:'',
 	        type:'',
             classification:'',
             posture:'',
@@ -20,13 +24,20 @@ class CreateFindingForm extends Component{
             confidentialityImpact:'',
             integrityImpact:'',
             availabilityImpact:'',
+            impactLevelDescription:'',
             threatRelevance:'',
             catScore:'',
+            systems:[],
+            tasks:[],
+            subtasks:[],
+            analysts:[],
             archiveStatus:false, 
             submitted:false
         };
         //why does this work?
         this.handleChange = this.handleChange.bind(this);
+        this.handleChangeOther = this.handleChangeTask.bind(this);
+        this.handleChangeOther = this.handleChangeSubtask.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     };
     handleSubmit = async e =>{
@@ -36,6 +47,10 @@ class CreateFindingForm extends Component{
         const description = this.state.description
         const longDescription = this.state.longDescription
         const status = this.state.status
+        const analyst = this.state.analyst
+        const system = this.state.system
+        const task = this.state.task
+        const subtask = this.state.subtask
         const type = this.state.type
         const classification = this.state.classification
         const posture = this.state.posture
@@ -53,16 +68,33 @@ class CreateFindingForm extends Component{
         console.log(vulnScore)
         const archiveStatus = this.state.archiveStatus
         const payload = {
-            hostName, ipPort, description, longDescription, status, type,
-            classification, associationToFinding, archiveStatus
+            hostName, ipPort, description, longDescription, analyst, status, system, task, subtask, type, classification, posture, associationToFinding, 
+            confidentialityImpact, integrityImpact, impactLevelDescription, availabilityImpact, threatRelevance, catScore
         }
         this.createFinding(payload)
         this.setState({submitted:true})
         console.log('Create Forms f-1')
     } 
+      displayAnalysts(posts){
+        if(!posts.length) return null;
+        return posts.map((post, index) => (
+          <option key={index} value={post.initial}>{post.initial}</option>
+        ))
+      }
     calculateVS(catScore,impactLevel,countermeasureValue){
         return (catScore*impactLevel*countermeasureValue)/10
     }
+    getAnalysts = async e =>{
+        
+        await api.getAllAnalyst().then((res)=>{
+          console.log("Made it here")
+          const data = res.data.data
+          this.setState({analysts:data})
+          
+        }).catch(()=>{
+          this.setState({analysts:[]})
+        })
+      }
     calculateCatValue(score){ 
         const cat = 0
         switch(score){
@@ -81,7 +113,20 @@ class CreateFindingForm extends Component{
     createFinding(payload){
         api.insertFinding(payload)
     }
-
+    componentDidMount(){
+        this.getSystems();
+        this.getAnalysts();
+      }
+      getSystems = async e =>{
+        await api.getAllSystems().then((res)=>{
+          const data = res.data.data
+          
+          this.setState({systems:data})
+          
+        }).catch(()=>{
+          this.setState({systems:[]})
+        })
+      }
     handleChange = e =>{
         console.log(e)
         const target = e.target;
@@ -91,6 +136,55 @@ class CreateFindingForm extends Component{
           [name]: value
         });
       };
+      handleChangeTask = e =>{
+        console.log(e)
+        const target = e.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+          [name]: value
+        });
+        this.setTaskList(value)
+      };
+      handleChangeSubtask = e =>{
+        console.log(e)
+        const target = e.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+          [name]: value
+        });
+        this.setSubtaskList(value)
+      };
+      setTaskList = async (val) =>{
+        await api.getTaskBySystem(val).then((res) =>{
+            const data = res.data.data
+            console.log(data)
+            if(data == null){
+                this.setState({tasks:[]})
+            }else{
+                this.setState({tasks:data})
+            }
+            
+        }).catch(()=>{
+            this.setState({tasks:[]})
+            })
+      }
+      setSubtaskList = async (val) =>{
+        console.log("Made it to subtask by task")
+      }
+      displaySystems(posts){
+        if(!posts.length) return null;
+        return posts.map((post, index) => (
+          <option key={index} value={post._id}>{post.systemName}</option>
+        ))
+      }
+      displayTaskList(posts){
+        if(!posts.length) return null;
+        return posts.map((post, index) => (
+          <option key={index} value={post._id}>{post.taskTitle}</option>
+        ))
+      }
     
     render(){
         
@@ -125,6 +219,28 @@ class CreateFindingForm extends Component{
                         <Form.Label>Detailed Description </Form.Label>
                         <Form.Control as="textarea" rows={3} value = {this.state.value} name = "longDescription" onChange = {this.handleChange}/>
                     </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">System </Form.Label>
+                        <select value = {this.state.value} name = "system" onChange = {this.handleChangeTask}>
+                        <option value="" selected disabled>None</option>
+                        {this.displaySystems(this.state.systems)}
+                                
+                            </select>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">Task </Form.Label>
+                        <select value = {this.state.value} name = "task" onChange = {this.handleChangeSubtask}>
+                                <option value="" selected>None</option>
+                                {this.displayTaskList(this.state.tasks)}
+                            </select>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">Subtask </Form.Label>
+                        <select value = {this.state.value} name = "subtask" onChange = {this.handleChange}>
+                                <option value="" selected>None</option>
+                                
+                            </select>
+                    </Form.Group>
 
                     <Form.Group controlId="status">
                         <Form.Label>Status </Form.Label>
@@ -144,6 +260,14 @@ class CreateFindingForm extends Component{
                     <Form.Group controlId="assoc">
                         <Form.Label>Findings linked to </Form.Label>
                         <Form.Control type="text" value = {this.state.value} name = "associationToFinding" onChange = {this.handleChange}/>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">Analyst</Form.Label>
+                        <select value = {this.state.value} name = "analyst" onChange = {this.handleChange}>
+                        <option value="" selected disabled>None</option>
+                          {this.displayAnalysts(this.state.analysts)}
+                                
+                            </select>
                     </Form.Group>
 
                     <Form.Group>

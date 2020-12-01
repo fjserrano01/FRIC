@@ -81,8 +81,8 @@ deleteAnalyst = async (req, res) => {
         return res.status(200).json({ success: true, data: analyst })
     }).catch(err => console.log(err))
 }
-getAnalyst = async (req, res) => {
-    await Analyst.find({}, (err, event) => {
+getAnalysts = async (req, res) => {
+    await Analyst.find({}, (err, analyst) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -91,6 +91,7 @@ getAnalyst = async (req, res) => {
                 .status(404)
                 .json({ success: false, error: `Analyst not found` })
         }
+        console.log(analyst)
         return res.status(200).json({ success: true, data: analyst })
     }).catch(err => console.log(err))
 }
@@ -116,7 +117,7 @@ module.exports = {
     getAnalystById,
     updateAnalyst,
     deleteAnalyst,
-    getAnalyst,
+    getAnalysts,
     createAnalyst,
     loginAnalyst
 }

@@ -4,7 +4,6 @@ import api from '../api'
 import * as moment from 'moment'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
-//import GetSubtaskByTask from '../components/getSubtaskByTask'
 
 class GetSubtaskByTask extends Component{
     constructor(props){
@@ -17,16 +16,15 @@ class GetSubtaskByTask extends Component{
         this.setSubTaskList()
     }
     displaySecondCell = (posts, info) =>{
-      console.log("in getSubTaskByTask")
       this.props.display(posts, info)
     }
     setSubTaskList = async e =>{
-        await api.GetSubtaskByTask(this.props.taskID).then((res) =>{
+        await api.getSubtaskByTask(this.props.taskID).then((res) =>{
             const data = res.data.data
             if(data == null){
                 this.setState({subtaskList:[]})
             }else{
-                this.setState({subtaskList:[data]})
+                this.setState({subtaskList:data})
             }
             
         }).catch(()=>{
@@ -35,8 +33,6 @@ class GetSubtaskByTask extends Component{
 
     }
     displaySubTask = (posts) =>{
-        console.log("in display subtask")
-        console.log(posts.length)
         if(!posts.length)return null;
         return posts.map((post, index)=>(
           <div key={index}>

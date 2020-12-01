@@ -8,6 +8,10 @@ const SubtaskSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  system:{
+    type:String,
+    required:true
+  },
   subtaskProgress: {
     type: String, //enumeration
   },
@@ -31,7 +35,7 @@ const SubtaskSchema = mongoose.Schema({
   subtaskCollaborators:{
     type: String
   },
-  subtaskArchive:{
+  archiveStatus:{
     type: Boolean,
     default: false
   }

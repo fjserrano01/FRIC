@@ -20,13 +20,15 @@ class viewSystem extends Component{
           systemConfidentiality:'',
           systemIntegrity:'',
           systemAvailability:'',
-          systemIdent:[]
+          systemIdent:[],
+          editForm:'', 
+          editStatus:false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     };
     handleSubmit = async e =>{
-        e.preventDefault();
+        const id = this.props.match.params.id
         const systemName= this.state.systemName
         const systemDescription = this.state.systemDescription
         const systemLocation = this.state.systemLocation
@@ -40,14 +42,14 @@ class viewSystem extends Component{
         const payload = {
           systemName, systemDescription, systemLocation, systemRouter, systemSwitch, systemRoom, testPlan, systemConfidentiality, systemIntegrity, systemAvailability
         }
-        this.updateSystem(payload)
-        this.setState({submitted:true})
-        
+        this.updateSystem(id, payload)
         
       };
-      updateSystem(payload){
-
-        
+      updateSystem(id, payload){
+        api.updateSystem(id, payload).then(()=>{
+          alert('Item updated')
+          this.setState({editStatus:false})
+        })
       }
       handleChange = e =>{
         const target = e.target;
@@ -57,6 +59,53 @@ class viewSystem extends Component{
           [name]: value
         });
       };
+      setVariables = e =>{
+        e.preventDefault();
+        const Name= e.target.systemName.value
+        const Description = e.target.systemDescription.value
+        const Location = e.target.systemLocation.value
+        const Router = e.target.systemRouter.value
+        const Switch = e.target.systemSwitch.value
+        const Room = e.target.systemRoom.value
+        const Plan = e.target.testPlan.value
+        const Confidentiality = e.target.systemConfidentiality.value
+        const Integrity = e.target.systemIntegrity.value
+        const Availability = e.target.systemAvailability.value
+      
+        console.log(e.target.systemDescription.value)
+        this.setState({
+          systemName : Name,
+          systemDescription : Description,
+          systemLocation : Location,
+          systemRouter : Router,
+          systemSwitch : Switch,
+          systemRoom : Room,
+          testPlan : Plan,
+          systemConfidentiality : Confidentiality,
+          systemIntegrity : Integrity,
+          systemAvailability : Availability,
+          editStatus:true,
+
+        })
+        console.log(this.state.systemName)
+        
+      }
+      handleArchive = async e =>{
+        const id = this.props.match.params.id
+        const archiveStatus =true
+        const payload = {
+          archiveStatus
+        }
+        console.log("made it here")
+        this.updateSystemArchive(id, payload)
+      };
+      updateSystemArchive (id, payload){
+        api.updateSystemArchive(id, payload).then(()=>{
+          alert('Item updated')
+          this.setState({archiveSubmitted:true})
+        })
+      
+    }
     setSystem = async e =>{
       console.log("you are in viewSystem setsystem")
       await api.getSystemById(this.props.match.params.id).then((res)=>{
@@ -78,7 +127,7 @@ class viewSystem extends Component{
         return posts.map((post, index) => (
                 <div key={index} className="form-group">
                     <h2>View system</h2>
-                    <form onSubmit={this.handleSubmit}>
+                    <form onSubmit={this.setVariables}>
                     <div className="form-group">
                       <label >System</label>
                       <input 
@@ -172,6 +221,16 @@ class viewSystem extends Component{
                         class="form-control" 
                         />
                     </div>
+                    <div class="form-group">
+                      <label >Integrity</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={post.systemIntegrity}
+                        name="systemIntegrity"
+                        class="form-control" 
+                        />
+                    </div>
                     <button type="submit" class="btn btn-primary">Edit</button>
                     </form>
                 </div>
@@ -179,10 +238,155 @@ class viewSystem extends Component{
       )
     }
     render(){
-      if(this.state.submitted){
-        return (<Redirect to="/system"/>)
+      if(this.state.archiveSubmitted){
+        return(<Redirect to="/system"/>);
+      }
+      if(this.state.archive){
+        return(
+          <div className="wrapper formatted-form">
+            <div>
+              Are you sure you want to archive this system?
+              <a className="btn btn-primary" onClick={()=>this.handleArchive()}>Yes</a>
+              <a className="btn btn-primary" onClick={()=>this.setState({archive:!this.state.archive})}>No</a>
+            </div>
+          </div>
+        )
+      }
+      if(this.state.editStatus){
+        console.log("editstatus = true")
+        return(
+          <div className="wrapper formatted-form">
+                <div class="form-group"></div>
+                    <h2>View system</h2>
+                    <form onSubmit={this.handleSubmit}>
+                    <div className="form-group">
+                      <label >System</label>
+                      <input 
+                        onChange={this.handleChange}
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemName}
+                        name="systemName"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div className="form-group">
+                      <label >Description</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemDescription}
+                        name="systemDescription"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Location</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemLocation}
+                        name="systemLocation"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Router</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemRouter}
+                        name="systemRouter"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Switch</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemSwitch}
+                        name="systemSwitch"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Room</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemRoom}
+                        name="systemRoom"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label>TestPlan</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.testPlan}
+                        name="testPlan"
+                        class="form-control" 
+                        contentEditable="true"
+                         />
+                    </div>
+                    <div class="form-group">
+                      <label >Confidentiality</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemConfidentiality}
+                        name="systemConfidentiality"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Availability</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemAvailability}
+                        name="taskTitle"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Integrity</label>
+                      <input 
+                        onChange={this.handleChange} 
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.systemIntegrity}
+                        name="systemIntegrity"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <button className="btn btn-primary" onClick={()=>this.setState({archive:!this.state.archive})}>Archive</button>
+                </div>
+        )
       }
       else{
+        console.log("editstatus = false")
         return(
         <div className="wrapper formatted-form">
         {
@@ -191,42 +395,6 @@ class viewSystem extends Component{
         </div>
         )
       }
-      /*
-      if(this.state.submitted){
-          return (<Redirect to="/tasks"/>)
-
-      }
-      else{
-          return( 
-              <div className="wrapper formatted-form">
-              <div class="form-group">
-                <h2>Create Task</h2>
-              <form onSubmit={this.handleSubmit}>
-                
-                  
-                  
-                  
-                  
-                  <div class="form-group">
-                    <label>Collaborators</label>
-                    <input 
-                      type="text" 
-                      onChange={this.handleChange}  
-                      value={this.state.value}
-                      class="form-control" 
-                      name="collaborators"
-                      placeholder="Collaborators" 
-                      required />
-                  </div>
-                  
-        
-                  <button type="submit" onClick="window.location.href = '/tasks'" class="btn btn-primary">Submit</button>
-                </form>
-              </div>
-            </div>
-            )
-      }*/
-      
     };
   }
 export default viewSystem;

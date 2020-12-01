@@ -3,6 +3,8 @@ import api from '../api'
 import { Redirect } from 'react-router-dom'
 //import * as moment from 'moment'
 import moment from 'moment'
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/esm/Button'
 //import DatePicker from 'react-datepicker'
 //import "react-datepicker/dist/react-datepicker.css"
 
@@ -11,20 +13,27 @@ class viewFinding extends Component{
     constructor(){
         super();
         this.state = {
-          id:'', 
-          hostName:'', 
-          ip: '', 
-          description:'', 
-          longDescription: '', 
-          status: '', 
-          type:'', 
-          classification:'',
-          evidence:'',
-          system:'',
-          task:'', 
-          subtask:'',
-          relatedFinding:'',
-          findingIdent:[]
+          hostName:'',
+	        ipPort:'',
+	        description:'',
+	        longDescription:'',
+            status:'',
+            system:'',
+            task:'',
+            subtask:'',
+	        type:'',
+            classification:'',
+            posture:'',
+            associationToFinding:'',
+            confidentialityImpact:'',
+            integrityImpact:'',
+            availabilityImpact:'',
+            threatRelevance:'',
+            catScore:'',
+          findingIdent:[],
+          editStatus:false,
+          archive:false,
+          archiveSubmitted:false
           
         };
         this.handleChange = this.handleChange.bind(this);
@@ -32,26 +41,98 @@ class viewFinding extends Component{
     };
     handleSubmit = async e =>{
         e.preventDefault();
-        const id= this.state.id
+        const id = this.props.id
         const hostName = this.state.hostName
-        const ip = this.state.ip
+        const ipPort = this.state.ipPort
         const description = this.state.description
         const longDescription = this.state.longDescription
         const status = this.state.status
+        const system = this.state.system
+        const task = this.state.task
+        const subtask = this.state.subtask
         const type = this.state.type
         const classification = this.state.classification
-        const system = this.state.system
+        const posture = this.state.posture
+        const associationToFinding = this.state.associationToFinding
+        const confidentialityImpact = this.state.confidentialityImpact
+        const integrityImpact = this.state.integrityImpact
+        const availabilityImpact = this.state.availabilityImpact
+        const threatRelevance = this.state.threatRelevance
+        const catScore = this.state.catScore
         const payload = {
-          id, hostName,ip,description, longDescription, status, type, classification,system
+          hostName, ipPort, description, longDescription, status, system, task, subtask, type, classification, posture, associationToFinding, confidentialityImpact, integrityImpact, availabilityImpact, threatRelevance, catScore
         }
-        this.updateTask(payload)
+        this.updateFinding(id, payload)
         
         
       };
-      updateTask (payload){
-
+      handleArchive = async e =>{
+        const id = this.props.match.params.id
+        const archiveStatus =true
+        const payload = {
+          archiveStatus
+        }
+        console.log("made it here")
+        this.updateFindingArchive(id, payload)
         
-      }
+        
+      };
+      updateFinding (id, payload){
+        api.updateFinding(id, payload).then(()=>{
+          alert('Item updated')
+          this.setState({editStatus:false})
+        })
+      
+    }
+    updateFindingArchive (id, payload){
+      api.updatefindingarchive(id, payload).then(()=>{
+        alert('Item updated')
+        this.setState({archiveSubmitted:true})
+      })
+    
+  }
+  setVariables = async e =>{
+    e.preventDefault();
+    const hostName = e.target.hostName.value
+        const ipPort = e.target.ipPort.value
+        const description = e.target.description.value
+        const longDescription = e.target.longDescription.value
+        const status = e.target.status.value
+        const system = e.target.system.value
+        const task = e.target.task.value
+        const subtask = e.target.subtask.value
+        const type = e.target.type.value
+        const classification = e.target.classification.value
+        const posture = e.target.posture.value
+        const associationToFinding = e.target.associationToFinding.value
+        const confidentialityImpact = e.target.confidentialityImpact.value
+        const integrityImpact = e.target.integrityImpact.value
+        const availabilityImpact = e.target.availabilityImpact.value
+        const threatRelevance = e.target.threatRelevance.value
+        const catScore = e.target.catScore.value
+    this.setState({
+      hostName:hostName, 
+      ipPort:ipPort, 
+      description:description, 
+      longDescription:longDescription, 
+      status:status, 
+      system:system, 
+      task:task, 
+      subtask:subtask, 
+      type:type, 
+      classification:classification, 
+      posture:posture, 
+      associationToFinding:associationToFinding, 
+      confidentialityImpact:confidentialityImpact, 
+      integrityImpact:integrityImpact, 
+      availabilityImpact:availabilityImpact, 
+      threatRelevance:threatRelevance, 
+      catScore:catScore,
+      editStatus:true
+
+    })
+    
+  }
       handleChange = e =>{
         const target = e.target;
         const value = target.value;
@@ -80,116 +161,293 @@ class viewFinding extends Component{
         return posts.map((post, index) => (
                 <div key={index} className="form-group">
                     <h2>View Finding</h2>
-                    <form onSubmit={this.handleSubmit}>
-                    <div className="form-group">
-                      <label >ID</label>
-                      <input 
-                        onChange={this.handleChange} 
-                        type="text" 
-                        value={post.id}
-                        name="taskTitle"
-                        className="form-control" 
-                        placeholder="Enter Task Title"
-                        />
-                    </div>
-                    <div className="form-group">
-                      <label >Host Name</label>
-                      <input 
-                        onChange={this.handleChange} 
-                        type="text" 
-                        value={post.hostName}
-                        name="taskDescription"
-                        className="form-control" 
-                        
-                        />
-                    </div>
-                    <div class="form-group">
-                      <label >IP</label>
-                      <input 
-                        onChange={this.handleChange} 
-                        type="text" 
-                        value={post.ipPort}
-                        name="system"
-                        class="form-control" 
-                        />
-                    </div>
-                    <div class="form-group">
-                      <label >Description</label>
-                      <input 
-                        onChange={this.handleChange} 
-                        type="text" 
-                        value={post.description}
-                        name="analyst"
-                        class="form-control" 
-                        />
-                    </div>
-                    <div class="form-group">
-                    <label>Details</label>
-                      <input 
-                        placeholder="Not Selected" 
-                        onChange={this.handleChange}  
-                        value={post.longDescription}
-                        class="form-control" 
-                        name="priority" 
-                         >
-                      </input>
-                      </div>
-                      <div class="form-group">
-                      <label>status</label>
-                      <input 
-                        placeholder="Not Selected" 
-                        onChange={this.handleChange}  
-                        value={post.status}
-                        class="form-control" 
-                        name="progress" 
-                         >
-                      </input>
-                    </div>
-                    <div class="form-group">
-                      <label>Type</label>
-                      <input 
-                        type="text" 
-                        onChange={this.handleChange}  
-                        value={post.type}
-                        class="form-control" 
-                        name="collaborators"
-                        
-                         />
-                    </div>
-                    <div class="form-group">
-                      <label class="control-label">Classification</label>
-                      <input 
-                        type="text" 
-                        onChange={this.handleChange}  
-                        value={post.classification}
-                        
-                        />
-                    </div>
-                    <div class="form-group">
-                      <label>System</label>
-                      <input 
-                        type="text" 
-                        onChange={this.handleChange}  
-                        value={post.system}
-                        class="form-control" 
-                        name="collaborators"
-                         />
-                    </div>
-                    <button type="submit" class="btn btn-primary">Edit</button>
-                    </form>
                     
+                    <Form onSubmit={this.setVariables} >
+                
+                    <Form.Group controlId="host">
+                        <Form.Label className="padding-add">Host Name </Form.Label>
+                        <Form.Control type="text" value = {post.hostName} name = "hostName" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="ip">
+                        <Form.Label>IP Port </Form.Label>
+                        <Form.Control type="text" value = {post.ipPort} name = "ipPort" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="desc">
+                        <Form.Label>Description </Form.Label>
+                        <Form.Control type="text" value = {post.description} name = "description" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="longDesc">
+                        <Form.Label>Detailed Description </Form.Label>
+                        <Form.Control as="textarea" rows={3} value = {this.longDescription} name = "longDescription" onChange = {this.handleChange}/>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">System </Form.Label>
+                        <select value = {post.system} name = "system" onChange = {this.handleChange}>
+                          <option value={post.system} selected> {post.system}</option>
+                                
+                            </select>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">Task </Form.Label>
+                        <select value = {post.task} name = "task" onChange = {this.handleChange}>
+                        <option value={post.task} selected> {post.task}</option>
+                            </select>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">Subtask </Form.Label>
+                        <select value = {post.subtask} name = "subtask" onChange = {this.handleChange}>
+                        <option value={post.subtask} selected> {post.subtask}</option>
+                            </select>
+                    </Form.Group>
+
+                    <Form.Group controlId="status">
+                        <Form.Label>Status </Form.Label>
+                        <Form.Control type="text" value = {post.status} name = "status" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="type">
+                        <Form.Label>Type </Form.Label>
+                        <Form.Control type="text" value = {post.type} name = "type" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="class">
+                        <Form.Label>Classification </Form.Label>
+                        <Form.Control type="text" value = {post.classification} name = "classification" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="assoc">
+                        <Form.Label>Findings linked to </Form.Label>
+                        <Form.Control type="text" value = {post.associationToFinding} name = "associationToFinding" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label className="padding-add">Posture </Form.Label>
+                        <select value = {post.posture} name = "posture" onChange = {this.handleChange}>
+                        <option value={post.posture} selected> {post.posture}</option>
+                                
+                            </select>
+                    </Form.Group>
+
+                    <Form.Group controlId="CImpact">
+                        <Form.Label className="padding-add">Confidentiality </Form.Label>
+                        <select value = {post.confidentialityImpact} name = "confidentialityImpact" onChange = {this.handleChange}>
+                        <option value={post.confidentialityImpact} selected> {post.confidentialityImpact}</option>
+                        </select>
+                    </Form.Group>
+
+                    <Form.Group controlId="IImpact">
+                        <Form.Label className="padding-add">Integrity </Form.Label>
+                        <select value = {post.integrityImpact} name = "integrityImpact" onChange = {this.handleChange}>
+                        <option value={post.integrityImpact} selected> {post.integrityImpact}</option>
+                        </select>
+                    </Form.Group>
+
+                    <Form.Group controlId="AImpact">
+                        <Form.Label className="padding-add">Availability </Form.Label>
+                        <select value = {post.availabilityImpact} name = "availabilityImpact" onChange = {this.handleChange}>
+                        <option value={post.availabilityImpact} selected> {post.availabilityImpact}</option>
+                            
+                        </select>
+                    </Form.Group>
+
+                    <Form.Group controlId = "CounterValue">
+                        <Form.Label className="padding-add">Countermeasure </Form.Label>
+                        <select value = {post.countermeasureValue} name = "countermeasureValue" onChange = {this.handleChange}>
+                        <option value={post.countermeasureValue} selected> {post.countermeasureValue}</option>
+                            </select>
+                    </Form.Group>
+
+                    <Form.Group controlId = "ImpactLvl">
+                        <Form.Label className="padding-add">Impact Level </Form.Label>
+                            <select value = {post.impactLevel} name = "impactLevel" onChange = {this.handleChange}>
+                            <option value={post.impactLevel} selected> {post.impactLevel}</option>
+                            </select>
+                            
+                    </Form.Group>
+                    <Form.Group controlId = "ImpactLvlDes">
+                        <Form.Label className="padding-add">Impact Level Description </Form.Label>
+                            
+                            <Form.Control type="text" value = {post.impactLevelDescription} name = "impactLevelDescription" onChange = {this.handleChange}/>
+                            
+                    </Form.Group>
+
+                    <Form.Group controlId = "ThreatRelevance">
+                        <Form.Label className="padding-add">Threat Relevance </Form.Label>
+                        <select value = {post.threatRelevance} name = "threatRelevance" onChange = {this.handleChange}>
+                        <option value={post.threatRelevance} selected> {post.threatRelevance}</option>
+                        </select>
+
+                    </Form.Group>
+
+                    <Form.Group controlId = "CAT">
+                        <Form.Label className="padding-add">CAT Score </Form.Label>
+                        <select value={post.catScore}name="catScore"onChange={this.handleChange}>
+                        <option value={post.catScore} selected> {post.catScore}</option>
+                        </select>
+                    </Form.Group>
+
+                    <Button type = "submit"onClick="console.log(finding button clicked)" >Edit</Button>
+                </Form>
                 </div>
         ))
     }
       render(){
-        return(
+        if(this.state.archiveSubmitted){
+          return(<Redirect to="/findings"/>);
+        }
+        if(this.state.archive){
+          return(
+            <div className="wrapper formatted-form">
+              <div>
+                Are you sure you want to archive this task?
+                <a className="btn btn-primary" onClick={()=>this.handleArchive()}>Yes</a>
+                <a className="btn btn-primary" onClick={()=>this.setState({archive:!this.state.archive})}>No</a>
+              </div>
+            </div>
+            
+          )
+        }
+        if(this.state.editStatus){
+          return(
+            <div className="wrapper formatted-form">
+            <Form onSubmit = {this.handleSubmit}>
+                
+                    <Form.Group controlId="host">
+                        <Form.Label className="padding-add">Host Name </Form.Label>
+                        <Form.Control defaultValue={this.state.hostName} type="text" value = {this.state.value} name = "hostName" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="ip">
+                        <Form.Label>IP Port </Form.Label>
+                        <Form.Control defaultValue={this.state.ipPort} type="text" value = {this.state.value} name = "ipPort" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="desc">
+                        <Form.Label>Description </Form.Label>
+                        <Form.Control defaultValue={this.state.description} type="text" value = {this.state.value} name = "description" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="longDesc">
+                        <Form.Label>Detailed Description </Form.Label>
+                        <Form.Control as="textarea" rows={3} defaultValue={this.state.longDescription} value = {this.state.value} name = "longDescription" onChange = {this.handleChange}/>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">System </Form.Label>
+                        <select value = {this.state.system}  name = "system" onChange = {this.handleChange}>
+                                
+                            </select>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">Task </Form.Label>
+                        <select value = {this.state.task} name = "task" onChange = {this.handleChange}>
+                            </select>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="padding-add">Subtask </Form.Label>
+                        <select value = {this.state.subtask} name = "subtask" onChange = {this.handleChange}>
+                                
+                            </select>
+                    </Form.Group>
+
+                    <Form.Group controlId="status">
+                        <Form.Label>Status </Form.Label>
+                        <Form.Control defaultValue={this.state.status} type="text" value = {this.state.value} name = "status" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="type">
+                        <Form.Label>Type </Form.Label>
+                        <Form.Control type="text" defaultValue={this.state.type} value = {this.state.value} name = "type" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="class">
+                        <Form.Label>Classification </Form.Label>
+                        <Form.Control type="text" defaultValue={this.state.classification} value = {this.state.value} name = "classification" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group controlId="assoc">
+                        <Form.Label>Findings linked to </Form.Label>
+                        <Form.Control type="text" defaultValue={this.state.associationToFinding} value = {this.state.value} name = "associationToFinding" onChange = {this.handleChange}/>
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label className="padding-add">Posture </Form.Label>
+                        <select  value = {this.state.value} name = "posture" onChange = {this.handleChange}>
+                                
+                            </select>
+                    </Form.Group>
+
+                    <Form.Group controlId="CImpact">
+                        <Form.Label className="padding-add">Confidentiality </Form.Label>
+                        <select value = {this.state.value} name = "confidentialityImpact" onChange = {this.handleChange}>
+                        </select>
+                    </Form.Group>
+
+                    <Form.Group controlId="IImpact">
+                        <Form.Label className="padding-add">Integrity </Form.Label>
+                        <select value = {this.state.value} name = "integrityImpact" onChange = {this.handleChange}>
+                        </select>
+                    </Form.Group>
+
+                    <Form.Group controlId="AImpact">
+                        <Form.Label className="padding-add">Availability </Form.Label>
+                        <select value = {this.state.value} name = "availabilityImpact" onChange = {this.handleChange}>
+                            
+                        </select>
+                    </Form.Group>
+
+                    <Form.Group controlId = "CounterValue">
+                        <Form.Label className="padding-add">Countermeasure </Form.Label>
+                        <select value = {this.state.value} name = "countermeasureValue" onChange = {this.handleChange}>
+                            </select>
+                    </Form.Group>
+
+                    <Form.Group controlId = "ImpactLvl">
+                        <Form.Label className="padding-add">Impact Level </Form.Label>
+                            <select value = {this.state.value} name = "impactLevel" onChange = {this.handleChange}>
+                            </select>
+                            
+                    </Form.Group>
+                    <Form.Group controlId = "ImpactLvlDes">
+                        <Form.Label className="padding-add">Impact Level Description </Form.Label>
+                            
+                            <Form.Control  type="text" value = {this.state.value} name = "impactLevelDescription" onChange = {this.handleChange}/>
+                            
+                    </Form.Group>
+
+                    <Form.Group controlId = "ThreatRelevance">
+                        <Form.Label className="padding-add">Threat Relevance </Form.Label>
+                        <select value = {this.state.threatRelevance} name = "threatRelevance" onChange = {this.handleChange}>
+
+                        </select>
+
+                    </Form.Group>
+
+                    <Form.Group controlId = "CAT">
+                        <Form.Label className="padding-add">CAT Score </Form.Label>
+                        <select value={this.state.catScore}name="catScore"onChange={this.handleChange}>
+                        </select>
+                    </Form.Group>
+
+                    <Button type = "submit"onClick="console.log(finding button clicked)" >Submit</Button>
+                </Form>
+                </div>
+
+          );
+        }
+
+        else{
+          return(
+
             <div className="wrapper formatted-form">
                 {
                     this.displayFinding(this.state.findingIdent)
                 }
             </div>
         )
-
+        }
 
         
       };

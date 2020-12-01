@@ -54,7 +54,6 @@ updateSubtask = async (req, res) => {
         subtask.subtaskAssociation = body.subtaskAssociation
         subtask.subtaskTeam = body.subtaskTeam
         subtask.subtaskCollaborators = body.subtaskCollaborators
-        subtask.subtaskArchive = body.subtaskArchive
         subtask
             .save()
             .then(() => {
@@ -73,6 +72,43 @@ updateSubtask = async (req, res) => {
     })
 }
 
+updateSubtaskArchive = async (req, res) => {
+    const body = req.body
+    console.log(body)
+
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    Subtask.findOne({ _id: req.params.id }, (err, subtask) => {
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: 'subtask not found!',
+            })
+        }
+        console.log(subtask)
+        subtask.archiveStatus = body.archiveStatus,
+        
+        subtask.save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: subtask._id,
+                    message: 'subtask updated!',
+                })
+            })
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'subtask not updated!',
+                })
+            })
+    })
+}
 deleteSubtask = async (req, res) => {
     await Subtask.findOneAndDelete({ _id: req.params.id }, (err, subtask) => {
         if (err) {
@@ -98,7 +134,7 @@ getSubtaskById = async (req, res) => {
     }).catch(err => console.log(err))
 }
 getSubtask = async (req, res) => {
-    await Subtask.find({subtaskArchive:false}, (err, subtask) => {
+    await Subtask.find({archiveStatus:false}, (err, subtask) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -112,7 +148,7 @@ getSubtask = async (req, res) => {
     }).catch(err => console.log(err))
 }
 getSubtaskByTask = async (req, res) => {
-    await Subtask.findOne({ taskID: req.params.id }, (err, subtask) => {
+    await Subtask.find({ taskID: req.params.id, archiveStatus: false }, (err, subtask) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -120,11 +156,27 @@ getSubtaskByTask = async (req, res) => {
         return res.status(200).json({ success: true, data: subtask })
     }).catch(err => console.log(err))
 }
+getArchivedSubtasks = async (req, res) => {
+    await Subtask.find({archiveStatus:true }, (err, subtask) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!subtask.length) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Subtask not found` })
+        }
+        console.log(subtask)
+        return res.status(200).json({ success: true, data: subtask })
+    }).catch(err => console.log(err))
+}
 module.exports = {
     createSubtask,
     updateSubtask,
+    updateSubtaskArchive,
     deleteSubtask,
     getSubtask,
     getSubtaskById,
-    getSubtaskByTask
+    getSubtaskByTask,
+    getArchivedSubtasks
 }

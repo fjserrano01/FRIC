@@ -11,10 +11,12 @@ const TaskSchema = mongoose.Schema({
   system:{
     type: String //Enumeration
   },
+  // systemName:{
+  //   type:String
+  // },
   analyst:{
       type:String
   },
-
   priority:{
       type: String, //Enumeration
       required:true
@@ -36,6 +38,10 @@ const TaskSchema = mongoose.Schema({
   }, 
   dueDate:{
     type: Date
+  },
+  archiveStatus:{
+    type: Boolean,
+    default:false
   }
 });
 

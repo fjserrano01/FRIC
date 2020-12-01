@@ -3,11 +3,21 @@ const Schema = mongoose.Schema
 
 const Finding = new Schema(
     {
-        hostNam:{type:String, required: false},
+        hostName:{type:String, required: false},
         ipPort:{type:String, required: false},
         description:{type:String, required: false},
         longDescription:{type: String, required: false},
         status:{type: String, required: false},
+        analyst:{type:String},
+        system:{
+            type: String //Enumeration
+          },
+          task:{
+            type: String //Enumeration
+          },
+          subtask:{
+            type: String //Enumeration
+          },
         type:{type:String, required: false},
         classification:{type:String, required:false},
         associationToFinding:{type:Array, required:false},

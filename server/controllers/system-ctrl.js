@@ -77,6 +77,43 @@ updateSystem = async (req, res) => {
     })
 }
 
+updateSystemArchive = async (req, res) => {
+    const body = req.body
+    console.log(body)
+
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    System.findOne({ _id: req.params.id }, (err, system) => {
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: 'system not found!',
+            })
+        }
+        console.log(system)
+        system.archiveStatus = body.archiveStatus,
+        
+        system.save()
+            .then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: system._id,
+                    message: 'system updated!',
+                })
+            })
+            .catch(error => {
+                return res.status(404).json({
+                    error,
+                    message: 'system not updated!',
+                })
+            })
+    })
+}
 deleteSystem = async (req, res) => {
     await System.findOneAndDelete({ _id: req.params.id }, (err, event) => {
         if (err) {
@@ -102,7 +139,7 @@ getSystemtById = async (req, res) => {
     }).catch(err => console.log(err))
 }
 getSystems = async (req, res) => {
-    await System.find({}, (err, system) => {
+    await System.find({archiveStatus:false}, (err, system) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -115,10 +152,27 @@ getSystems = async (req, res) => {
         return res.status(200).json({ success: true, data: system })
     }).catch(err => console.log(err))
 }
+getArchivedSystems = async (req, res) => {
+    await System.find({archiveStatus:true }, (err, system) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!system.length) {
+            return res
+                .status(404)
+                .json({ success: false, error: `System not found` })
+        }
+        console.log(system)
+        return res.status(200).json({ success: true, data: system })
+    }).catch(err => console.log(err))
+}
+
 module.exports = {
     createSystem,
     updateSystem,
+    updateSystemArchive,
     deleteSystem,
     getSystems,
-    getSystemtById
+    getSystemtById,
+    getArchivedSystems
 }

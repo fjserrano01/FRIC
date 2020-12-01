@@ -6,7 +6,7 @@ router.get('/analyst/:id', analystCtrl.getAnalystById)
 router.post('/analyst', analystCtrl.createAnalyst)
 router.put('/analyst/:id', analystCtrl.updateAnalyst)
 router.delete('/analyst', analystCtrl.deleteAnalyst)
-router.get('/analyst', analystCtrl.getAnalyst)
+router.get('/analysts', analystCtrl.getAnalysts)
 router.get('/analystLogin', analystCtrl.loginAnalyst)
 
 module.exports = router

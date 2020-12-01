@@ -21,6 +21,7 @@ import viewSystem from '../components/viewSystem'
 import CreateFinding from '../components/CreateFindingForm'
 import Finding from '../components/finding'
 import viewFinding from '../components/viewFinding'
+import Archive from '../components/archive'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -112,7 +113,7 @@ class App extends Component{
                       You are in Genereal {
                         this.state.initials
                       }
-                      <General/>
+                      <General init={this.state.initials}/>
                       <Footer 
                         onClick={ () => this.logout() }
                       />
@@ -290,11 +291,26 @@ class App extends Component{
                 }
               }
               } />
+              <Route path="/view-finding/:id" component={viewFinding}/>
+              <Route path="/login" render={() => {
+                if(!this.state.isLogged){
+                  return(
+                    <Login 
+                      login={this.loginUser.bind(this)}
+                    />
+                  )
+                }else{
+                  return(
+                    <Redirect to="/"/>
+                  );
+                }
+              }
+              } />
               <Route path="/findings" exact render={() =>{
                 if(this.state.isLogged){
                   return(
                     <div>
-                      You are in Finding {
+                      {
                         this.state.initials
                       }
                       <Finding/>
@@ -314,7 +330,7 @@ class App extends Component{
                 if(this.state.isLogged){
                   return(
                     <div>
-                      You are in create System {
+                     {
                         this.state.initials
                       }
                       <CreateFinding/>
@@ -347,7 +363,28 @@ class App extends Component{
                 }
               }
               } />
+              <Route path="/archive" exact render={() =>{
+                if(this.state.isLogged){
+                  return(
+                    <div>
+                     {
+                        this.state.initials
+                      }
+                      <Archive/>
+                      <Footer 
+                        onClick={ () => this.logout() }
+                      />
+                    </div>
+                )
+                }else{
+                  return(<div>
+                      <Redirect to="/login"/>
+                    </div>);
+                }
+              }
+              }/>
           </Router>
+          
       )
     }
 

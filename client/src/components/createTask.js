@@ -10,7 +10,8 @@ class CreateTask extends Component{
         this.state = {
           taskTitle:'', 
           taskDescription:'', 
-          system: '', 
+          system: '',
+          //systemName:'',
           analyst:'', 
           priority: '', 
           progress: '', 
@@ -21,7 +22,8 @@ class CreateTask extends Component{
           attatchments:'', 
           dueDate:new Date(),
           submitted:false, 
-          systems: []
+          systems: [],
+          analysts:[]
           
         };
         this.handleChange = this.handleChange.bind(this);
@@ -31,6 +33,7 @@ class CreateTask extends Component{
         const taskTitle= this.state.taskTitle
         const taskDescription = this.state.taskDescription
         const system = this.state.system
+        //const systemName = this.state.systemName
         const analyst = this.state.analyst
         const priority = this.state.priority
         const progress = this.state.progress
@@ -54,7 +57,6 @@ class CreateTask extends Component{
         
       }
       handleChange = e =>{
-        console.log(e)
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -63,8 +65,21 @@ class CreateTask extends Component{
           [name]: value
         });
       };
+      // handleChangeSystem = e =>{
+      //   const target = e.target
+      //   const value = target.value;
+      //   const sysName = target.sysName;
+      //   const name = target.name
+      //   console.log("systemname", sysName)
+
+      //   this.setState({
+      //     [name]: value,
+      //     systemName : sysName
+      //   });
+      // }
       componentDidMount(){
         this.getSystems();
+        this.getAnalysts();
       }
       getSystems = async e =>{
         await api.getAllSystems().then((res)=>{
@@ -76,10 +91,27 @@ class CreateTask extends Component{
           this.setState({systems:[]})
         })
       }
+      getAnalysts = async e =>{
+        
+        await api.getAllAnalyst().then((res)=>{
+          console.log("Made it here")
+          const data = res.data.data
+          this.setState({analysts:data})
+          
+        }).catch(()=>{
+          this.setState({analysts:[]})
+        })
+      }
       displaySystems(posts){
         if(!posts.length) return null;
         return posts.map((post, index) => (
           <option key={index} value={post._id}>{post.systemName}</option>
+        ))
+      }
+      displayAnalysts(posts){
+        if(!posts.length) return null;
+        return posts.map((post, index) => (
+          <option key={index} value={post.initial}>{post.initial}</option>
         ))
       }
       handleDateChange = e =>{
@@ -132,19 +164,22 @@ class CreateTask extends Component{
                         class="form-control" 
                         name="system" 
                         required >
+                          <option value="" selected disabled>None</option>
                           {this.displaySystems(this.state.systems)}
                       </select>
                     </div>
                     <div class="form-group">
                       <label >Analyst</label>
-                      <input 
-                        onChange={this.handleChange} 
-                        type="text" 
+                        <select 
+                        placeholder="Not Selected" 
+                        onChange={this.handleChange}  
                         value={this.state.value}
-                        name="analyst"
                         class="form-control" 
-                        placeholder="Assign Analyst"
-                        />
+                        name="analyst" 
+                        required >
+                          <option value="" selected disabled>None</option>
+                          {this.displayAnalysts(this.state.analysts)}
+                      </select>
                     </div>
                     <div class="form-group">
                       <label>Priority</label>

@@ -23,7 +23,7 @@ const SystemSchema = mongoose.Schema({
     testPlan:{
         type: String
     },
-    systemArchive:{
+    archiveStatus:{
         type: Boolean,
         default: false
     },
@@ -35,7 +35,7 @@ const SystemSchema = mongoose.Schema({
     },
     systemAvailability:{
         type: String //Enumeration
-    }  
+    }
 });
 
 module.exports = mongoose.model('System', SystemSchema);

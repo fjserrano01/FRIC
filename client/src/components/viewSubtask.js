@@ -18,7 +18,9 @@ class viewSubtask extends Component{
           subtaskAssociation:'',
           subtaskTeam:'',
           subtaskCollaborators:'',
-          submitted:false,
+          system:"",
+          taskID:"",
+          editStatus:false,
           subtaskIdent:[]
           
         };
@@ -26,7 +28,7 @@ class viewSubtask extends Component{
         this.handleSubmit = this.handleSubmit.bind(this);
     };
     handleSubmit = async e =>{
-        e.preventDefault();
+        const id = this.props.match.params.id
         const subtaskTitle= this.state.subtaskTitle
         const subtaskProgress = this.state.subtaskProgress
         const subtaskDescription = this.state.subtaskDescription
@@ -38,14 +40,13 @@ class viewSubtask extends Component{
         const payload = {
           subtaskTitle, subtaskProgress, subtaskDescription, subtaskDueDate, subtaskAttachment, subtaskAssociation, subtaskTeam, subtaskCollaborators
         }
-        this.updateSubtask(payload)
-        this.setState({submitted:true})
-        
-        
+        this.updateSubtask(id, payload)  
       };
-      updateSubtask (payload){
-
-        
+      updateSubtask (id, payload){
+        api.updateSubtask(id, payload).then(()=>{
+          alert('Item updated')
+          this.setState({editStatus:false})
+        })
       }
       handleChange = e =>{
         const target = e.target;
@@ -55,6 +56,49 @@ class viewSubtask extends Component{
           [name]: value
         });
       };
+      setVariables = e =>{
+        console.log("settingVariable", e.target.subtaskProgress.value)
+        const Title= e.target.subtaskTitle.value
+        const Progress = e.target.subtaskProgress.value
+        const Description = e.target.subtaskDescription.value
+        const DueDate = e.target.subtaskDueDate.value
+        const Attachment = e.target.subtaskAttachment.value
+        const Association = e.target.subtaskAssociation.value
+        const Team = e.target.subtaskTeam.value
+        const Collaborators = e.target.subtaskCollaborators.value
+
+        console.log(e.target.subtaskTitle.value)
+        this.setState({
+          subtaskTitle : Title,
+          subtaskProgress : Progress,
+          subtaskDescription : Description,
+          subtaskDueDate : DueDate,
+          subtaskAttachment : Attachment,
+          subtaskAssociation : Association,
+          subtaskTeam : Team,
+          subtaskCollaborators : Collaborators,
+          editStatus:true,
+          archive:false,
+          archiveSubmitted:false
+        })
+      }
+
+      handleArchive = async e =>{
+        const id = this.props.match.params.id
+        const archiveStatus =true
+        const payload = {
+          archiveStatus
+        }
+        console.log("made it here")
+        this.updateSubtaskArchive(id, payload)
+      };
+      updateSubtaskArchive (id, payload){
+        api.updateSubtaskArchive(id, payload).then(()=>{
+          alert('Item updated')
+          this.setState({archiveSubmitted:true})
+        })
+      
+    }
     setSubtask = async e =>{
       console.log("you are in viewSubtask setsubtask")
       await api.getSubtaskById(this.props.match.params.id).then((res)=>{
@@ -76,7 +120,7 @@ class viewSubtask extends Component{
         return posts.map((post, index) => (
                 <div key={index} className="form-group">
                     <h2>View Subtask</h2>
-                    <form onSubmit={this.handleSubmit}>
+                    <form onSubmit={this.setVariables}>
                     <div className="form-group">
                       <label >Title</label>
                       <input 
@@ -136,7 +180,7 @@ class viewSubtask extends Component{
                         onChange={this.handleChange}  
                         value={post.subtaskProgress}
                         class="form-control" 
-                        name="progress" 
+                        name="subtaskProgress" 
                          >
                             <option value="" disabled selected>Choose your option</option>
                             <option value="Not Started">Not Started</option>
@@ -175,8 +219,135 @@ class viewSubtask extends Component{
       )
     }
       render(){
-        if(this.state.submitted){
-          return (<Redirect to="/subtask"/>)
+        if(this.state.archiveSubmitted){
+          return(<Redirect to="/subtask"/>);
+        }
+        if(this.state.archive){
+          return(
+            <div className="wrapper formatted-form">
+              <div>
+                Are you sure you want to archive this subtask?
+                <a className="btn btn-primary" onClick={()=>this.handleArchive()}>Yes</a>
+                <a className="btn btn-primary" onClick={()=>this.setState({archive:!this.state.archive})}>No</a>
+              </div>
+            </div>
+            
+          )
+        }
+        if(this.state.editStatus){
+          console.log("editstatus = true")
+          return(
+            <div className="wrapper formatted-form">
+                  <div class="form-group"></div>
+                    <h2>View Subtask</h2>
+                    <form onSubmit={this.handleSubmit}>
+                    <div className="form-group">
+                      <label >Title</label>
+                      <input 
+                        onChange={this.handleChange}
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.subtaskTitle}
+                        name="subtaskTitle"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div className="form-group">
+                      <label >Subtask Description</label>
+                      <input 
+                        onChange={this.handleChange}
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.subtaskDescription}
+                        name="subtaskDescription"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Subtask Team</label>
+                      <input 
+                        onChange={this.handleChange}
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.subtaskTeam}
+                        name="subtaskTeam"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Subtask Attachment</label>
+                      <input 
+                        onChange={this.handleChange}
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.subtaskAttachment}
+                        name="subtaskAttachment"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                    <div class="form-group">
+                      <label >Subtask Association</label>
+                      <input 
+                        onChange={this.handleChange}
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.subtaskAssociation}
+                        name="subtaskAssociation"
+                        class="form-control" 
+                        contentEditable="true"
+                        />
+                    </div>
+                      <div class="form-group">
+                      <label>Progress</label>
+                      <select
+                        placeholder="Not Selected" 
+                        onChange={this.handleChange}  
+                        value={this.state.value}
+                        defaultValue={this.state.systemProgress}
+                        class="form-control" 
+                        name="systemProgress" 
+                         >
+                            <option value="" disabled selected>Choose your option</option>
+                            <option value="Not Started">Not Started</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Transferred">Transferred</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Complete">Complete</option>
+                            <option value="Not Applicable">Not Applicable</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Collaborators</label>
+                      <input 
+                        onChange={this.handleChange}
+                        type="text" 
+                        value={this.state.value}
+                        defaultValue={this.state.subtaskCollaborators}
+                        name="subtaskCollaborators"
+                        class="form-control" 
+                        contentEditable="true"
+                         />
+                    </div>
+                    <div class="form-group">
+                      <label class="control-label" for="date">Due Date: </label>
+                      <input 
+                        type="text" 
+                        onChange={this.handleChange}  
+                        value={moment(this.state.subtaskDueDate).format('MM-DD-YY')}
+                        class="form-control" 
+                        name="subtaskDueDate"
+                        contentEditable="true"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <button className="btn btn-primary" onClick={()=>this.setState({archive:!this.state.archive})}>Archive</button>
+                </div>
+            )
         }
         else{
           return(
@@ -187,42 +358,6 @@ class viewSubtask extends Component{
           </div>
           )
         }
-        /*
-        if(this.state.submitted){
-            return (<Redirect to="/tasks"/>)
-
-        }
-        else{
-            return( 
-                <div className="wrapper formatted-form">
-                <div class="form-group">
-                  <h2>Create Task</h2>
-                <form onSubmit={this.handleSubmit}>
-                  
-                    
-                    
-                    
-                    
-                    <div class="form-group">
-                      <label>Collaborators</label>
-                      <input 
-                        type="text" 
-                        onChange={this.handleChange}  
-                        value={this.state.value}
-                        class="form-control" 
-                        name="collaborators"
-                        placeholder="Collaborators" 
-                        required />
-                    </div>
-                    
-          
-                    <button type="submit" onClick="window.location.href = '/tasks'" class="btn btn-primary">Submit</button>
-                  </form>
-                </div>
-              </div>
-              )
-        }*/
-        
       };
     }
 export default viewSubtask;
