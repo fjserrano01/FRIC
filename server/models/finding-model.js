@@ -35,6 +35,8 @@ const Finding = new Schema(
         vs:{type:String},
         likelihood:{type:String},
         risk:{type:String},
+        mitigation:{type:String},
+        attachemnt:{type:String},
         archiveStatus:{type: Boolean, default: false}
     
     }

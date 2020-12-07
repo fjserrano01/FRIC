@@ -119,68 +119,68 @@ ERBReport = async(req,res) =>{
                 {text: "ID", options: {}},
                 {text: i+1, options:{w:2}},
                 {text:"Impact Score", options:{w:2}},
-                {text:"1",options:{w:2}},
+                {text: findings[i].impactLevel,options:{w:2}},
                 {text:"Status", options:{w:2}},
-                {text:"2",options:{w:2}},
+                {text:findings[i].status,options:{w:2}},
                 {text: "Posture", options:{w:2}}
             ],
             [
                 {text: "Host Names", options:{}},
                 {text:"IP: Port", options:{}},
                 {text:"CAT", options:{w:2}},
-                {text:"I", options:{w:2}},
+                {text:findings[i].catValue, options:{w:2}},
                 {text:"Likelihood",options:{w:2}},
-                {text:"INFO",options:{w:2}},
-                {text:"Nearsider",options:{rowspan:2}}
+                {text:findings[i].likelihood,options:{w:2}},
+                {text:findings[i].posture,options:{rowspan:2}}
             ],
             [
-                {text:"Zues", options:{rowspan:4}},
-                {text:"1.1.1.1.80,443",options:{rowspan:4}},
+                {text:findings[i].hostName, options:{rowspan:4}},
+                {text:findings[i].ipPort,options:{rowspan:4}},
                 {text:"CAT Score",options:{x:4,w:2}},
-                {text:"10",options:{x:6,w:2}},
+                {text:findings[i].catScore,options:{x:6,w:2}},
                 {text:"Impact",options:{x:8,w:2}},
-                {text:"VL",options:{x:10,w:2}},
+                {text:findings[i].impactLevel,options:{x:10,w:2}},
             ],
             [
                 {text:"Vs_Score",options:{w:2}},
-                {text:"0",options:{w:2}},
+                {text:findings[i].vulnScore,options:{w:2}},
                 {text:"Risk",options:{w:2}},
-                {text:"INFO",options:{w:2}},
+                {text:findings[i].risk,options:{w:2}},
                 {text:"C | I | A", options:{w:2}},
             ],
             [
                 {text:"VS"},
-                {text:"O"},
+                {text:findings[i].vs},
                 {text:"CM"},
-                {text:"10"},
-                {text:"N | N | N"},
+                {text:findings[i].countermeasureValue},
+                {text:findings[i].confidentialityImpact +" | "+ findings[i].integrityImpact+" | " + findings[i].availabilityImpact},
             ],
             [
                 {text:"Impact Rationale",options:{colspan:2}},
-                {text:"Degrades Capability XL", options:{colspan:3}}
+                {text:findings[i].impactLevelDescription, options:{colspan:3}}
             ],
             [
                 {text:"Type"},
-                {text:" Input Validation", options:{colspan:6}}
+                {text:findings[i].type, options:{colspan:6}}
             ],
             [
-                {text:"Description",options:{colspan:7}}
+                {text:findings[i].description,options:{colspan:7}}
             ],
             [
                 {text:"Description", options:{colspan:2,rowspan:3}},
-                {text:"Long Description",options:{colspan:5,rowspan:3}}
+                {text:findings[i].longDescription,options:{colspan:5,rowspan:3}}
             ],
             [],
             [],
             [
                 {text:"Mitigation",options:{colspan:2,rowspan:3}},
-                {text:"Check detailed information for more information about fixing this vulnerablility",options:{colspan:5,rowspan:3}}
+                {text:findings[i].mitigaiton,options:{colspan:5,rowspan:3}}
             ],
             [],
             [],
             [
                 {text:"Referances",options:{colspan:2}},
-                {text:"Figure X",options:{colspan:5}}
+                {text:finding[i].attachment,options:{colspan:5}}
             ],
             [
                 {text:"C- Confidentiality",options:{colspan:2}},
