@@ -37,8 +37,8 @@ const Finding = new Schema(
         risk:{type:String},
         mitigation:{type:String},
         attachemnt:{type:String},
-        archiveStatus:{type: Boolean, default: false}
-    
+        archiveStatus:{type: Boolean, default: false},
+        files:{type: Array}
     }
 )
 
