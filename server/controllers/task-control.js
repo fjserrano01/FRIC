@@ -164,7 +164,8 @@ getTaskBySystem = async (req, res) => {
     }).catch(err => console.log(err))
 }
 getTaskByDate = async (req, res) => {
-    await Task.find({ dueDate: {$gte : new Date()}, analyst:req.params.id, archiveStatus:false}, (err, task) => {
+    console.log("in getTaskByDate before", req.params.id)
+    await Task.find({ dueDate: {$gte : new Date()}, analyst:req.params.id, archiveStatus: false}, (err, task) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -172,7 +173,7 @@ getTaskByDate = async (req, res) => {
     }).catch(err => console.log(err))
 }
 getTaskByDateLate = async (req, res) => {
-    await Task.find({ dueDate: {$lt : new Date()} , analyst:req.params.id, archiveStatus:false}, (err, task) => {
+    await Task.find({ dueDate: {$lt : new Date()}, analyst:req.params.id, archiveStatus : false}, (err, task) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
