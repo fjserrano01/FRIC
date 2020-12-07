@@ -13,6 +13,6 @@ router.get('/tasks', TaskCtrl.getTasks)
 router.get('/tasksystem/:id', TaskCtrl.getTaskBySystem)
 router.get('/tasksdate/:id', TaskCtrl.getTaskByDate)
 router.get('/tasksdatelate/:id', TaskCtrl.getTaskByDateLate)
-router.get('/task/:id', TaskCtrl.getArchivedTasks)
+router.get('/task/', TaskCtrl.getArchivedTasks)
 
 module.exports = router

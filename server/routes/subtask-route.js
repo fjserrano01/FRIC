@@ -11,6 +11,6 @@ router.delete('/subtask/:id', SubtaskCtrl.deleteSubtask)
 router.get('/subtask/:id', SubtaskCtrl.getSubtaskById)
 router.get('/subtasks', SubtaskCtrl.getSubtask)
 router.get('/subtasktask/:id', SubtaskCtrl.getSubtaskByTask)
-router.get('/subtask/:id', SubtaskCtrl.getArchivedSubtasks)
+router.get('/subtask/', SubtaskCtrl.getArchivedSubtasks)
 
 module.exports = router

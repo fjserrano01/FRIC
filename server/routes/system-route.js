@@ -10,6 +10,6 @@ router.put('/systemarch/:id', SystemCtrl.updateSystemArchive)
 router.delete('/system/:id', SystemCtrl.deleteSystem)
 router.get('/system/:id', SystemCtrl.getSystemtById)
 router.get('/systems', SystemCtrl.getSystems)
-router.get('/system/:id', SystemCtrl.getArchivedSystems)
+router.get('/system/', SystemCtrl.getArchivedSystems)
 
 module.exports = router
