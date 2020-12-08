@@ -65,15 +65,14 @@ class CreateFindingForm extends Component{
         const catScore = this.state.catScore
         const catValue = this.calculateCatValue(catScore)
         const vulnScore = this.calculateVS(catValue,impactLevel,countermeasureValue)
-        console.log(vulnScore)
+        const files = document.getElementById("inputGroupFile01").files;
         const archiveStatus = this.state.archiveStatus
         const payload = {
             hostName, ipPort, description, longDescription, analyst, status, system, task, subtask, type, classification, posture, associationToFinding, 
-            confidentialityImpact, integrityImpact, impactLevelDescription, availabilityImpact, threatRelevance, catScore
+            confidentialityImpact, integrityImpact, impactLevelDescription, availabilityImpact, threatRelevance, catScore, files
         }
         this.createFinding(payload)
         this.setState({submitted:true})
-        console.log('Create Forms f-1')
     } 
       displayAnalysts(posts){
         if(!posts.length) return null;
@@ -87,7 +86,6 @@ class CreateFindingForm extends Component{
     getAnalysts = async e =>{
         
         await api.getAllAnalyst().then((res)=>{
-          console.log("Made it here")
           const data = res.data.data
           this.setState({analysts:data})
           
@@ -105,11 +103,6 @@ class CreateFindingForm extends Component{
         return cat
     }
 
-    /*async createFinding(payload){
-        await api.insertFinding(payload).then( res =>{
-            alert(('Finding Created'))
-        })
-    }*/
     createFinding(payload){
         api.insertFinding(payload)
     }
@@ -373,7 +366,9 @@ class CreateFindingForm extends Component{
                         </select>
                     </Form.Group>
 
-                    <Button type = "submit"onClick="console.log(finding button clicked)" >Submit</Button>
+                    <input type="file" id="inputGroupFile01"/>
+
+                    <Button type = "submit" >Submit</Button>
                 </Form>
                 </div>
             );
