@@ -169,33 +169,33 @@ getArchivedFindings = async (req, res) => {
         return res.status(200).json({ success: true, data: finding })
     }).catch(err => console.log(err))
 }
-// getFindingBySystem = async (req, res) => {​​​​​
-//     await Task.find({​​​​​ system: req.params.id, task:"", subtask:"" }​​​​​, (err, task) => {​​​​​
-//         if (err) {​​​​​
-//         return res.status(400).json({​​​​​ success: false, error: err }​​​​​)
-//         }​​​​​
-//         console.log("made it here to get task by system")
-//         return res.status(200).json({​​​​​ success: true, data: task }​​​​​)
-//         }​​​​​).catch(err => console.log(err))
-// }​​​​​
-// getFindingByTask = async (req, res) => {​​​​​
-//     await Task.find({​​​​​ task:req.params.id, subtask:"" }​​​​​, (err, task) => {​​​​​
-//         if (err) {​​​​​
-//         return res.status(400).json({​​​​​ success: false, error: err }​​​​​)
-//         }​​​​​
-//         console.log("made it here to get task by system")
-//         return res.status(200).json({​​​​​ success: true, data: task }​​​​​)
-//         }​​​​​).catch(err => console.log(err))
-// }​​​​​
-// getFindingBySubtask = async (req, res) => {​​​​​
-//     await Task.find({​​​​​ subtask: req.params.id }​​​​​, (err, task) => {​​​​​
-//         if (err) {​​​​​
-//         return res.status(400).json({​​​​​ success: false, error: err }​​​​​)
-//         }​​​​​
-//         console.log("made it here to get task by system")
-//         return res.status(200).json({​​​​​ success: true, data: task }​​​​​)
-//         }​​​​​).catch(err => console.log(err))
-// }​​​​​
+getFindingBySystem = async (req, res) => {
+    await Finding.find({ system: req.params.id, task: "", subtask: "", archiveStatus: false }, (err, finding) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: finding })
+    }).catch(err => console.log(err))
+}
+getFindingByTask = async (req, res) => {
+    await Finding.find({ task: req.params.id, subtask:"", archiveStatus: false }, (err, finding) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: finding })
+    }).catch(err => console.log(err))
+}
+getFindingBySubtask = async (req, res) => {
+    await Finding.find({ subtask: req.params.id, archiveStatus: false}, (err, finding) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+
+        return res.status(200).json({ success: true, data: finding })
+    }).catch(err => console.log(err))
+}
 
 module.exports = {
     createFinding,
@@ -204,8 +204,8 @@ module.exports = {
     getFindingById,
     getFindings,
     updateFindingArchive,
-    getArchivedFindings
-    // getFindingBySystem,
-    // getFindingByTask,
-    // getFindingBySubtask
+    getArchivedFindings,
+    getFindingBySystem,
+    getFindingByTask,
+    getFindingBySubtask
 }

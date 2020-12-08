@@ -68,6 +68,9 @@ export const updatefindingarchive = (id, payload)=> api6.put(`/findingarch/${id}
 export const deleteFinding = id => api6.delete(`/finding/${id}`)
 export const getFindingById = id => api6.get(`/finding/${id}`)
 export const getArchivedFindings = () => api6.get(`/finding/`)
+export const getFindingBySystem = id => api6.get(`/findingSystem/${id}`)
+export const getFindingByTask = id => api6.get(`/findingTask/${id}`)
+export const getFindingBySubtask = id => api6.get(`/findingSubtask/${id}`)
 
 
 const apis = {
@@ -113,7 +116,10 @@ const apis = {
     updatefindingarchive,
     deleteFinding,
     getFindingById,
-    getArchivedFindings
+    getArchivedFindings,
+    getFindingBySystem,
+    getFindingByTask,
+    getFindingBySubtask
 }
 
 export default apis

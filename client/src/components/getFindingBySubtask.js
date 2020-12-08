@@ -4,61 +4,55 @@ import api from '../api'
 import * as moment from 'moment'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
-import GetFindingBySubtask from './getFindingBySubtask'
 
-class GetSubtaskByTask extends Component{
+class GetFindingBySubtask extends Component{
     constructor(props){
         super(props);
         this.state = {
-            subtaskList:[]
+            findingList:[]
         }
     }
     componentDidMount(){
-        this.setSubTaskList()
+        this.setFindingList()
     }
     displaySecondCell = (posts, info) =>{
       this.props.display(posts, info)
     }
-    setSubTaskList = async e =>{
-        await api.getSubtaskByTask(this.props.taskID).then((res) =>{
+    setFindingList = async e =>{
+        await api.getFindingBySubtask(this.props.subID).then((res) =>{
             const data = res.data.data
             if(data == null){
-                this.setState({subtaskList:[]})
+                this.setState({findingList:[]})
             }else{
-                this.setState({subtaskList:data})
+                this.setState({findingList:data})
             }
             
         }).catch(()=>{
-            this.setState({subtaskList:[]})
+            this.setState({findingList:[]})
             })
     }
-    displaySubTask = (posts) =>{
+    displayFinding = (posts) =>{
         if(!posts.length)return null;
         return posts.map((post, index)=>(
           <div key={index}>
             <Accordion>
                       <Card>
                         <Card.Header>
-                        <div>Subtask</div>
+                        <div>Finding</div>
                           <Accordion.Toggle as={Button} variant="link" eventKey="0" >
-                            {post.subtaskTitle}
+                            {post.hostName}
                           </Accordion.Toggle>
-                          <button onClick={()=> this.displaySecondCell(post, "subtask")} >view</button>
+                          <button onClick={()=> this.displaySecondCell(post, "finding")} >view</button>
                         </Card.Header>
-                        <Accordion.Collapse eventKey="0">
-                          <Card.Body>
-                          <GetFindingBySubtask display={this.displaySecondCell.bind(this)} subID={post._id}/>
-                          </Card.Body>
-                        </Accordion.Collapse>
                       </Card>
                     </Accordion>
           </div>
         ))
       }
     render(){
-        return (<div>{this.displaySubTask(this.state.subtaskList)}</div>)
+        return (<div>{this.displayFinding(this.state.findingList)}</div>)
     }
 
 }
 
-export default GetSubtaskByTask
+export default GetFindingBySubtask

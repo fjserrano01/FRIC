@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import api from '../api';
 import { Table } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
@@ -9,6 +10,7 @@ import ReactNotification from 'react-notifications-component'
 import 'react-notifications-component/dist/theme.css'
 import {store} from 'react-notifications-component'
 import * as moment from 'moment'
+import GetFindingBySystem from '../components/getFindingBySystem'
 
 class General extends Component{
   constructor(props){
@@ -34,7 +36,7 @@ componentDidMount(){
     this.getTasksByDateLate()
 }
 addNot (posts){
-  console.log(posts)
+  console.log("in addNot",posts)
   if(!posts.length) return null;
   if(this.state.notified == true){
     return null
@@ -62,7 +64,7 @@ addNot (posts){
   ))
 }
 addNotLate (posts){
-  console.log(posts)
+  console.log("In addNotLate",posts)
   if(!posts.length) return null;
   if(this.state.notifiedLate == true){
     return null
@@ -99,8 +101,10 @@ getTasksByDate = async e =>{
     })
 }
 getTasksByDateLate = async e =>{
+  console.log("in getTaskByDateLate")
   await api.getTasksByDateLate(this.props.init).then((res)=>{
     const data = res.data.data
+    console.log("data:", data)
     this.setState({taskListByDateLate:data})
     
     }).catch(()=>{
@@ -146,10 +150,16 @@ displayProgress = (progress) => {
   if(!progress.length) return null;
   return progress.map((progress, index)=>(
   <div>
+    <div>
       Tasks Not Started: {progress.notStarted} / {progress.total}
+    </div>
+    <div>
       Tasks in Progress: {progress.inProgress} / {progress.total}
+    </div>
       Complete tasks: {progress.complete} / {progress.total}
-      Tasks total: {progress.total} 
+    <div>
+      Tasks total: {progress.total}
+    </div>
   </div>
   ))
 }
@@ -473,6 +483,143 @@ displayingSystemInformation = () =>{
                 </div>
     ))
   }
+  if(this.state.type == "finding"){
+    return posts.map((post, index) => (
+      <div key={index} className="form-group">
+          <h2>View Finding</h2>
+          
+          <Form onSubmit={this.setVariables} >
+      
+          <Form.Group controlId="host">
+              <Form.Label className="padding-add">Host Name </Form.Label>
+              <Form.Control type="text" value = {post.hostName} name = "hostName" onChange = {this.handleChange}/>
+          </Form.Group>
+
+          <Form.Group controlId="ip">
+              <Form.Label>IP Port </Form.Label>
+              <Form.Control type="text" value = {post.ipPort} name = "ipPort" onChange = {this.handleChange}/>
+          </Form.Group>
+
+          <Form.Group controlId="desc">
+              <Form.Label>Description </Form.Label>
+              <Form.Control type="text" value = {post.description} name = "description" onChange = {this.handleChange}/>
+          </Form.Group>
+
+          <Form.Group controlId="longDesc">
+              <Form.Label>Detailed Description </Form.Label>
+              <Form.Control as="textarea" rows={3} value = {this.longDescription} name = "longDescription" onChange = {this.handleChange}/>
+          </Form.Group>
+          <Form.Group>
+              <Form.Label className="padding-add">System </Form.Label>
+              <select value = {post.system} name = "system" onChange = {this.handleChange}>
+                <option value={post.system} selected> {post.system}</option>
+                      
+                  </select>
+          </Form.Group>
+          <Form.Group>
+              <Form.Label className="padding-add">Task </Form.Label>
+              <select value = {post.task} name = "task" onChange = {this.handleChange}>
+              <option value={post.task} selected> {post.task}</option>
+                  </select>
+          </Form.Group>
+          <Form.Group>
+              <Form.Label className="padding-add">Subtask </Form.Label>
+              <select value = {post.subtask} name = "subtask" onChange = {this.handleChange}>
+              <option value={post.subtask} selected> {post.subtask}</option>
+                  </select>
+          </Form.Group>
+
+          <Form.Group controlId="status">
+              <Form.Label>Status </Form.Label>
+              <Form.Control type="text" value = {post.status} name = "status" onChange = {this.handleChange}/>
+          </Form.Group>
+
+          <Form.Group controlId="type">
+              <Form.Label>Type </Form.Label>
+              <Form.Control type="text" value = {post.type} name = "type" onChange = {this.handleChange}/>
+          </Form.Group>
+
+          <Form.Group controlId="class">
+              <Form.Label>Classification </Form.Label>
+              <Form.Control type="text" value = {post.classification} name = "classification" onChange = {this.handleChange}/>
+          </Form.Group>
+
+          <Form.Group controlId="assoc">
+              <Form.Label>Findings linked to </Form.Label>
+              <Form.Control type="text" value = {post.associationToFinding} name = "associationToFinding" onChange = {this.handleChange}/>
+          </Form.Group>
+
+          <Form.Group>
+              <Form.Label className="padding-add">Posture </Form.Label>
+              <select value = {post.posture} name = "posture" onChange = {this.handleChange}>
+              <option value={post.posture} selected> {post.posture}</option>
+                      
+                  </select>
+          </Form.Group>
+
+          <Form.Group controlId="CImpact">
+              <Form.Label className="padding-add">Confidentiality </Form.Label>
+              <select value = {post.confidentialityImpact} name = "confidentialityImpact" onChange = {this.handleChange}>
+              <option value={post.confidentialityImpact} selected> {post.confidentialityImpact}</option>
+              </select>
+          </Form.Group>
+
+          <Form.Group controlId="IImpact">
+              <Form.Label className="padding-add">Integrity </Form.Label>
+              <select value = {post.integrityImpact} name = "integrityImpact" onChange = {this.handleChange}>
+              <option value={post.integrityImpact} selected> {post.integrityImpact}</option>
+              </select>
+          </Form.Group>
+
+          <Form.Group controlId="AImpact">
+              <Form.Label className="padding-add">Availability </Form.Label>
+              <select value = {post.availabilityImpact} name = "availabilityImpact" onChange = {this.handleChange}>
+              <option value={post.availabilityImpact} selected> {post.availabilityImpact}</option>
+                  
+              </select>
+          </Form.Group>
+
+          <Form.Group controlId = "CounterValue">
+              <Form.Label className="padding-add">Countermeasure </Form.Label>
+              <select value = {post.countermeasureValue} name = "countermeasureValue" onChange = {this.handleChange}>
+              <option value={post.countermeasureValue} selected> {post.countermeasureValue}</option>
+                  </select>
+          </Form.Group>
+
+          <Form.Group controlId = "ImpactLvl">
+              <Form.Label className="padding-add">Impact Level </Form.Label>
+                  <select value = {post.impactLevel} name = "impactLevel" onChange = {this.handleChange}>
+                  <option value={post.impactLevel} selected> {post.impactLevel}</option>
+                  </select>
+                  
+          </Form.Group>
+          <Form.Group controlId = "ImpactLvlDes">
+              <Form.Label className="padding-add">Impact Level Description </Form.Label>
+                  
+                  <Form.Control type="text" value = {post.impactLevelDescription} name = "impactLevelDescription" onChange = {this.handleChange}/>
+                  
+          </Form.Group>
+
+          <Form.Group controlId = "ThreatRelevance">
+              <Form.Label className="padding-add">Threat Relevance </Form.Label>
+              <select value = {post.threatRelevance} name = "threatRelevance" onChange = {this.handleChange}>
+              <option value={post.threatRelevance} selected> {post.threatRelevance}</option>
+              </select>
+
+          </Form.Group>
+
+          <Form.Group controlId = "CAT">
+              <Form.Label className="padding-add">CAT Score </Form.Label>
+              <select value={post.catScore}name="catScore"onChange={this.handleChange}>
+              <option value={post.catScore} selected> {post.catScore}</option>
+              </select>
+          </Form.Group>
+
+          <Button type = "submit"onClick="console.log(finding button clicked)" >Edit</Button>
+      </Form>
+      </div>
+))
+  }
 }
 displaySecondCell = (posts, info) =>{
   console.log("in displaySeconCell")
@@ -487,6 +634,7 @@ displaySystem = (posts) =>{
       <Accordion>
                 <Card>
                   <Card.Header>
+                  <div>System</div>
                     <Accordion.Toggle as={Button} variant="link" eventKey="0" >
                       {post.systemName}
                     </Accordion.Toggle>
@@ -495,6 +643,11 @@ displaySystem = (posts) =>{
                   <Accordion.Collapse eventKey="0">
                     <Card.Body>
                     <GetTaskBySystem display={this.displaySecondCell.bind(this)} system={post._id} />
+                    </Card.Body>
+                  </Accordion.Collapse>
+                  <Accordion.Collapse eventKey="0">
+                    <Card.Body>
+                    <GetFindingBySystem display={this.displaySecondCell.bind(this)} system={post._id} />
                     </Card.Body>
                   </Accordion.Collapse>
                 </Card>

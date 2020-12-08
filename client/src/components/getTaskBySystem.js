@@ -1,10 +1,11 @@
 import React, { Component, useState } from 'react'
 import { Table, Button, Fade } from 'react-bootstrap'
-import api from '../api'
+import api, { getFindingByTask } from '../api'
 import * as moment from 'moment'
 import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import GetSubtaskByTask from '../components/getSubtaskByTask'
+import GetFindingByTask from '../components/getFindingByTask'
 
 class GetTaskBySystem extends Component{
     constructor(props){
@@ -31,7 +32,6 @@ class GetTaskBySystem extends Component{
         }).catch(()=>{
             this.setState({taskList:[]})
             })
-
     }
     displayTask = (posts) =>{
         if(!posts.length)return null;
@@ -40,6 +40,7 @@ class GetTaskBySystem extends Component{
             <Accordion>
                       <Card>
                         <Card.Header>
+                        <div>Task</div>
                           <Accordion.Toggle as={Button} variant="link" eventKey="0" >
                             {post.taskTitle}
                           </Accordion.Toggle>
@@ -48,6 +49,11 @@ class GetTaskBySystem extends Component{
                         <Accordion.Collapse eventKey="0">
                           <Card.Body>
                           <GetSubtaskByTask display={this.displaySecondCell.bind(this)} taskID={post._id}/>
+                          </Card.Body>
+                        </Accordion.Collapse>
+                        <Accordion.Collapse eventKey="0">
+                          <Card.Body>
+                          <GetFindingByTask display={this.displaySecondCell.bind(this)} taskID={post._id}/>
                           </Card.Body>
                         </Accordion.Collapse>
                       </Card>
