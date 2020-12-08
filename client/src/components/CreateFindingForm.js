@@ -31,6 +31,7 @@ class CreateFindingForm extends Component{
             tasks:[],
             subtasks:[],
             analysts:[],
+            subtaskList:[],
             archiveStatus:false, 
             submitted:false
         };
@@ -65,15 +66,24 @@ class CreateFindingForm extends Component{
         const catScore = this.state.catScore
         const catValue = this.calculateCatValue(catScore)
         const vulnScore = this.calculateVS(catValue,impactLevel,countermeasureValue)
-        const files = document.getElementById("inputGroupFile01").files;
+        console.log(vulnScore)
         const archiveStatus = this.state.archiveStatus
         const payload = {
             hostName, ipPort, description, longDescription, analyst, status, system, task, subtask, type, classification, posture, associationToFinding, 
-            confidentialityImpact, integrityImpact, impactLevelDescription, availabilityImpact, threatRelevance, catScore, files
+            confidentialityImpact, integrityImpact, impactLevelDescription, availabilityImpact, threatRelevance, catScore
         }
         this.createFinding(payload)
+        this.log(hostName)
         this.setState({submitted:true})
+        console.log('Create Forms f-1')
     } 
+    log = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Created Finding " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       displayAnalysts(posts){
         if(!posts.length) return null;
         return posts.map((post, index) => (
@@ -86,6 +96,7 @@ class CreateFindingForm extends Component{
     getAnalysts = async e =>{
         
         await api.getAllAnalyst().then((res)=>{
+          console.log("Made it here")
           const data = res.data.data
           this.setState({analysts:data})
           
@@ -103,6 +114,11 @@ class CreateFindingForm extends Component{
         return cat
     }
 
+    /*async createFinding(payload){
+        await api.insertFinding(payload).then( res =>{
+            alert(('Finding Created'))
+        })
+    }*/
     createFinding(payload){
         api.insertFinding(payload)
     }
@@ -165,6 +181,18 @@ class CreateFindingForm extends Component{
       }
       setSubtaskList = async (val) =>{
         console.log("Made it to subtask by task")
+        await api.getSubtaskByTask(val).then((res) =>{
+            const data = res.data.data
+            console.log(data)
+            if(data == null){
+                this.setState({subtaskList:[]})
+            }else{
+                this.setState({subtaskList:data})
+            }
+            
+        }).catch(()=>{
+            this.setState({subtaskList:[]})
+            })
       }
       displaySystems(posts){
         if(!posts.length) return null;
@@ -176,6 +204,12 @@ class CreateFindingForm extends Component{
         if(!posts.length) return null;
         return posts.map((post, index) => (
           <option key={index} value={post._id}>{post.taskTitle}</option>
+        ))
+      }
+      displaySubtaskList(posts){
+        if(!posts.length) return null;
+        return posts.map((post, index) => (
+          <option key={index} value={post._id}>{post.subtaskTitle}</option>
         ))
       }
     
@@ -231,7 +265,7 @@ class CreateFindingForm extends Component{
                         <Form.Label className="padding-add">Subtask </Form.Label>
                         <select value = {this.state.value} name = "subtask" onChange = {this.handleChange}>
                                 <option value="" selected>None</option>
-                                
+                                {this.displaySubtaskList(this.state.subtaskList)}
                             </select>
                     </Form.Group>
 
@@ -366,9 +400,7 @@ class CreateFindingForm extends Component{
                         </select>
                     </Form.Group>
 
-                    <input type="file" id="inputGroupFile01"/>
-
-                    <Button type = "submit" >Submit</Button>
+                    <Button type = "submit"onClick="console.log(finding button clicked)" >Submit</Button>
                 </Form>
                 </div>
             );

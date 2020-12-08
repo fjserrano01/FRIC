@@ -21,8 +21,8 @@ class NavBar extends Component{
                 <Nav.Link href="/findings">Findings</Nav.Link>
                 <Nav.Link href="/archive">Archive</Nav.Link>
                 <Nav.Link href="/ConfigurationView">Configuration</Nav.Link>
-                <Nav.Link href="/setup">Setup</Nav.Link>
                 <Nav.Link href="/help">Help</Nav.Link>
+                <Nav.Link href="/log">Log</Nav.Link>
                 </Nav>
                 <Form inline>
                 <FormControl type="text" placeholder="Search" className="mr-sm-2" />

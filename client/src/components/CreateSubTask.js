@@ -43,8 +43,16 @@ class CreateSubTask extends Component{
           subtaskTitle, subtaskProgress, subtaskDescription, subtaskDueDate, subtaskAttachment, subtaskAssociation, subtaskTeam, subtaskCollaborators, taskID, system
         }
         this.createSubtask(payload)
+        this.log(subtaskTitle)
         this.setState({submitted:true})
     };
+    log = (hostName) =>{
+      let initials = localStorage.getItem("initial")
+      const description = "Created Subtask " + hostName
+      const payload = {initials, description}
+      api.createlog(payload)
+      console.log("logging ",initials)
+  }
     componentDidMount(){
       this.getSystems();
       this.getAnalysts();

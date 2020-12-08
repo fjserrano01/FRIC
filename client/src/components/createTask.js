@@ -47,10 +47,18 @@ class CreateTask extends Component{
           taskTitle, taskDescription, system, analyst, priority, progress, numSubtasks, numFindings, collaborators, relatedTasks, dueDate
         }
         this.createTask(payload)
+        this.log(taskTitle)
         this.setState({submitted:true})
         
         
       };
+      log = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Created Task " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       createTask (payload){
 
         api.insertTask(payload)

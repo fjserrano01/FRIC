@@ -180,7 +180,7 @@ ERBReport = async(req,res) =>{
             [],
             [
                 {text:"Referances",options:{colspan:2}},
-                {text:finding[i].attachment,options:{colspan:5}}
+                {text:findings[i].attachment,options:{colspan:5}}
             ],
             [
                 {text:"C- Confidentiality",options:{colspan:2}},

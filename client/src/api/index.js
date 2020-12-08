@@ -18,6 +18,9 @@ const api5 = axios.create({
 const api6 = axios.create({
     baseURL: "http://localhost:5000/finding"
 })
+const api7 = axios.create({
+    baseURL: "http://localhost:5000/log"
+})
 
 export const insertEvent = payload => api.post(`/event`, payload)
 export const getAllEvents = () => api.get(`/events`)
@@ -72,6 +75,8 @@ export const getFindingBySystem = id => api6.get(`/findingSystem/${id}`)
 export const getFindingByTask = id => api6.get(`/findingTask/${id}`)
 export const getFindingBySubtask = id => api6.get(`/findingSubtask/${id}`)
 
+export const createlog = payload => api7.post(`/log`, payload)
+export const getlog = () => api7.get(`/log`)
 
 const apis = {
     insertEvent, 
@@ -119,7 +124,9 @@ const apis = {
     getArchivedFindings,
     getFindingBySystem,
     getFindingByTask,
-    getFindingBySubtask
+    getFindingBySubtask,
+    createlog,
+    getlog
 }
 
 export default apis

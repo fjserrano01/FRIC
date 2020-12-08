@@ -43,8 +43,16 @@ class viewSystem extends Component{
           systemName, systemDescription, systemLocation, systemRouter, systemSwitch, systemRoom, testPlan, systemConfidentiality, systemIntegrity, systemAvailability
         }
         this.updateSystem(id, payload)
+        this.log(systemName)
         
       };
+      log = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Editing System " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       updateSystem(id, payload){
         api.updateSystem(id, payload).then(()=>{
           alert('Item updated')
@@ -98,7 +106,15 @@ class viewSystem extends Component{
         }
         console.log("made it here")
         this.updateSystemArchive(id, payload)
+        this.logArchive(this.state.systemName)
       };
+      logArchive = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Archived System " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       updateSystemArchive (id, payload){
         api.updateSystemArchive(id, payload).then(()=>{
           alert('Item updated')

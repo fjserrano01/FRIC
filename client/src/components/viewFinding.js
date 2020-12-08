@@ -63,10 +63,17 @@ class viewFinding extends Component{
           hostName, ipPort, description, longDescription, status, system, task, subtask, type, classification, posture, associationToFinding, confidentialityImpact, integrityImpact, availabilityImpact, threatRelevance, catScore
         }
         this.updateFinding(id, payload)
-        
-        
+        this.log(hostName)
       };
-      handleArchive = async e =>{
+      log = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Editing Finding " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
+    handleArchive = async e =>{
+        console.log("in handle finding Archive")
         const id = this.props.match.params.id
         const archiveStatus =true
         const payload = {
@@ -74,9 +81,15 @@ class viewFinding extends Component{
         }
         console.log("made it here")
         this.updateFindingArchive(id, payload)
-        
-        
+        this.logArchive(this.state.hostName)
       };
+      logArchive = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Archived Finding " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       updateFinding (id, payload){
         api.updateFinding(id, payload).then(()=>{
           alert('Item updated')
@@ -85,12 +98,12 @@ class viewFinding extends Component{
       
     }
     updateFindingArchive (id, payload){
-      api.updatefindingarchive(id, payload).then(()=>{
-        alert('Item updated')
-        this.setState({archiveSubmitted:true})
-      })
-    
-  }
+        console.log("in finding archive")
+        api.updatefindingarchive(id, payload).then(()=>{
+          alert('Item updated')
+          this.setState({archiveSubmitted:true})
+        })
+    }
   setVariables = async e =>{
     e.preventDefault();
     const hostName = e.target.hostName.value
@@ -290,6 +303,7 @@ class viewFinding extends Component{
                     </Form.Group>
 
                     <Button type = "submit"onClick="console.log(finding button clicked)" >Edit</Button>
+                    
                 </Form>
                 </div>
         ))
@@ -433,6 +447,7 @@ class viewFinding extends Component{
 
                     <Button type = "submit"onClick="console.log(finding button clicked)" >Submit</Button>
                 </Form>
+                <button className="btn btn-primary" onClick={()=>this.setState({archive:!this.state.archive})}>Archive</button>
                 </div>
 
           );

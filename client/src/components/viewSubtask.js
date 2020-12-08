@@ -40,8 +40,16 @@ class viewSubtask extends Component{
         const payload = {
           subtaskTitle, subtaskProgress, subtaskDescription, subtaskDueDate, subtaskAttachment, subtaskAssociation, subtaskTeam, subtaskCollaborators
         }
-        this.updateSubtask(id, payload)  
+        this.updateSubtask(id, payload)
+        this.log(subtaskTitle)
       };
+      log = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Editing Subtask " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       updateSubtask (id, payload){
         api.updateSubtask(id, payload).then(()=>{
           alert('Item updated')
@@ -91,7 +99,15 @@ class viewSubtask extends Component{
         }
         console.log("made it here")
         this.updateSubtaskArchive(id, payload)
+        this.logArchive(this.state.subtaskTitle)
       };
+      logArchive = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Archived Subtask " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       updateSubtaskArchive (id, payload){
         api.updateSubtaskArchive(id, payload).then(()=>{
           alert('Item updated')

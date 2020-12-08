@@ -41,7 +41,15 @@ class ViewTask extends Component{
       }
       console.log("made it here")
       this.updateTaskArchive(id, payload)
+      this.logArchive(this.state.taskTitle)
     };
+    logArchive = (hostName) =>{
+      let initials = localStorage.getItem("initial")
+      const description = "Archived Task " + hostName
+      const payload = {initials, description}
+      api.createlog(payload)
+      console.log("logging ",initials)
+  }
 
 
     handleSubmit = async e =>{
@@ -63,9 +71,15 @@ class ViewTask extends Component{
         }
         console.log("made it here")
         this.updateTask(id, payload)
-        
-        
+        this.log(taskTitle)
       };
+      log = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Created Finding " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       updateTask (id, payload){
           api.updateTask(id, payload).then(()=>{
             alert('Item updated')

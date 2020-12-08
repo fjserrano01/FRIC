@@ -181,6 +181,7 @@ getTaskByDateLate = async (req, res) => {
     }).catch(err => console.log(err))
 }
 getArchivedTasks = async (req, res) => {
+    console.log("in getArchivedTasks")
     await Task.find({archiveStatus:true }, (err, task) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
@@ -190,7 +191,7 @@ getArchivedTasks = async (req, res) => {
                 .status(404)
                 .json({ success: false, error: `Task not found` })
         }
-        console.log(task)
+        console.log("GetArchivedTasks ".task)
         return res.status(200).json({ success: true, data: task })
     }).catch(err => console.log(err))
 }

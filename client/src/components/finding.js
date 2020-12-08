@@ -64,7 +64,7 @@ class Finding extends Component{
         
         return(
             <div className="container">
-                <a className="btn btn-primary" target="_blank" href="/create-finding">Create Finding</a>
+                <a className="btn btn-primary" href="/create-finding">Create Finding</a>
                 <a className="btn btn-primary" target="_blank" href="http://localhost:5000/reports/erb">ERB Report</a>
                 <a className="btn btn-primary" target="_blank" href="http://localhost:5000/reports/risk">Risk Matrix</a>
                 <a className="btn btn-primary" target="_blank" href="http://localhost:5000/reports/final">Final Report</a>

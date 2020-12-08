@@ -40,8 +40,16 @@ class CreateSystem extends Component{
         
         }
         this.createSystem(payload)
+        this.log(systemName)
         this.setState({submitted:true})
       };
+      log = (hostName) =>{
+        let initials = localStorage.getItem("initial")
+        const description = "Created Finding " + hostName
+        const payload = {initials, description}
+        api.createlog(payload)
+        console.log("logging ",initials)
+    }
       createSystem(payload){
         console.log("in create system")
         console.log(payload)

@@ -10,7 +10,8 @@ const systemRoute = require('./routes/system-route');
 const subtaskRoute = require('./routes/subtask-route');
 const taskRoute = require('./routes/task-routes');
 const findingRoute = require('./routes/finding-router');
-const reportsRoute = require('./routes/reportsRoutes')
+const reportsRoute = require('./routes/reportsRoutes');
+const logRoute = require('./routes/log-route')
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
@@ -32,4 +33,5 @@ app.use('/subtask', subtaskRoute);
 app.use('/task', taskRoute);
 app.use('/finding', findingRoute);
 app.use('/reports', reportsRoute);
+app.use('/log', logRoute);
 app.listen(5000);
