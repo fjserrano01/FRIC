@@ -2,8 +2,10 @@
 Finding and Reporting Information Console, Team Coding Edge
 
 Installation:
-One must install MongoDB into their system, this link can help with the download and installation
-of mongodb https://docs.mongodb.com/manual/installation/
+One must install MongoDB as well as Node.js into their system, these links can help with the download and installations:
+https://docs.mongodb.com/manual/installation/  https://phoenixnap.com/kb/install-node-js-npm-on-windows
+
+Node.js download link: https://nodejs.org/en/download/
 
 This video can assist with installation of MongoDB for windows 10 https://www.youtube.com/watch?v=GmeW8s8snsU
 
